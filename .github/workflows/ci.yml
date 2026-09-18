@@ -1,0 +1,25 @@
+name: Kulcskezelo CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Kód letöltése a repóból
+        uses: actions/checkout@v4
+        
+      - name: Python környezet beállítása
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          
+      - name: Ruff Linter és Formatter futtatása
+        run: |
+          pip install ruff
+          ruff check .
+          ruff format --check .
