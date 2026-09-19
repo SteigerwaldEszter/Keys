@@ -10,16 +10,16 @@ jobs:
   lint-and-test:
     runs-on: ubuntu-latest
     steps:
-      - name: Kód letöltése a repóból
+      - name: KÃ³d letÃ¶ltÃ©se a repÃ³bÃ³l
         uses: actions/checkout@v4
         
-      - name: Python környezet beállítása
+      - name: Python kÃ¶rnyezet beÃ¡llÃ­tÃ¡sa
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           
-      - name: Ruff Linter és Formatter futtatása
+      - name: Ruff Linter Ã©s Formatter futtatÃ¡sa
         run: |
-          pip install ruff
+          python -m pip install ruff
           ruff check .
           ruff format --check .
