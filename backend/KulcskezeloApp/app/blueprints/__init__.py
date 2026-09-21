@@ -1,45 +1,53 @@
-from apiflask import APIBlueprint
-bp = APIBlueprint('main', __name__, tag="main")
-from app.models import *
-from apiflask import HTTPError
-from app.extensions import auth
-from flask import current_app
-from datetime import datetime
-from authlib.jose import jwt
-from functools import wraps
+ï»¿# from datetime import datetime
+# from functools import wraps
 
-@bp.route('/')
-def index():
-    return 'This is The Main Blueprint'
+# from apiflask import apiblueprint, httperror
+# from authlib.jose import jwt
+# from flask import current_app
 
-@auth.verify_token
-def verify_token(token):
-    try:
-        data = jwt.decode(
-            token.encode('ascii'),
-            current_app.config['SECRET_KEY']
-        )
-        if data["exp"] < int(datetime.now().timestamp()):
-            return None
-        return data
-    except Exception as ex:
-        print(f"JWT Error: {ex}")
-        return None
+# from app.extensions import auth
 
-def role_required(roles):
-    def wrapper(fn):
-        @wraps(fn)
-        def decorated_function(*args, **kwargs):
-            user_roles = [item.get("rolename") if isinstance(item, dict) else item for item in auth.current_user.get("roles", [])]
-            
-            #teszteléshez
-            print(f"DEBUG: Elvárt: {roles}, User roles: {user_roles}")
-            
-            for role in roles:
-                if role in user_roles:
-                    return fn(*args, **kwargs)
+# bp = apiblueprint("main", __name__, tag="main")
 
-            raise HTTPError(message="Access denied.", status_code=403)
-            
-        return decorated_function
-    return wrapper
+
+# @bp.route("/")
+# def index():
+#     return "this is the main blueprint"
+
+
+# @auth.verify_token
+# def verify_token(token):
+#     try:
+#         data = jwt.decode(
+#             token.encode("ascii"),
+#             current_app.config["secret_key"],
+#         )
+#         if data["exp"] < int(datetime.now().timestamp()):
+#             return none
+#         return data
+#     except exception as ex:
+#         print(f"jwt error: {ex}")
+#         return none
+
+
+# def role_required(roles):
+#     def wrapper(fn):
+#         @wraps(fn)
+#         def decorated_function(*args, **kwargs):
+#             user_roles = [
+#                 item.get("rolename") if isinstance(item, dict) else item
+#                 for item in auth.current_user.get("roles", [])
+#             ]
+
+#             # tesztelÃ©shez
+#             print(f"debug: elvÃ¡rt: {roles}, user roles: {user_roles}")
+
+#             for role in roles:
+#                 if role in user_roles:
+#                     return fn(*args, **kwargs)
+
+#             raise httperror(message="access denied.", status_code=403)
+
+#         return decorated_function
+
+#     return wrapper
