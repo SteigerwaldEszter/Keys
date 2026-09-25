@@ -10,11 +10,13 @@ services:
       - "3306:3306"
 
   backend:
-    build: 
-        context: .
-        dockerfile: backend/Dockerfile
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "5000:5000"
+    volumes:
+      - ./backend/KulcskezeloApp:/app
     environment:
       - FLASK_APP=run.py
       - FLASK_DEBUG=1
