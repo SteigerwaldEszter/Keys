@@ -4,7 +4,6 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 def load_private_key():
-
     path = os.path.abspath(os.path.dirname(__file__))
 
     key_path = os.path.join(path, ".ssh", "private_key.pem")

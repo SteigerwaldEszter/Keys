@@ -1,5 +1,4 @@
 from __future__ import annotations
-from argparse import Action
 
 from sqlalchemy import Integer, String, Text, ForeignKey, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship

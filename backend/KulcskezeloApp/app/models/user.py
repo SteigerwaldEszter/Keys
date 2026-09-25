@@ -8,11 +8,11 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 
 class User(db.Model):
-    __tablename__ = 'users'
+    __tablename__ = "users"
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     email: Mapped[str] = mapped_column(String(150), unique=True, nullable=False)
-    password_hash: Mapped[str] = mapped_column(String(255), nullable=False) 
+    password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     pin_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
 
@@ -21,7 +21,6 @@ class User(db.Model):
     audit_logs = relationship("AuditLog", back_populates="user")
     reservations = relationship("Reservation", back_populates="user")
     key_logs = relationship("KeyLog", back_populates="user")
-
 
     def set_password(self, password: str) -> None:
         self.password_hash = generate_password_hash(password)

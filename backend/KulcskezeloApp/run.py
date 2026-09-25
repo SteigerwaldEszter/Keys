@@ -1,3 +1,11 @@
+# from flask import Flask
+# from config import Config
+# from app import create_app
+
+# if __name__=="__main__":
+#     create_app(config_class=Config).run('localhost', 5555)
+
+
 """
 This script runs the application using a development server.
 It contains the definition of routes and views for the application.
