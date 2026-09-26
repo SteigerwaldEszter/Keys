@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from sqlalchemy import Integer, String, ForeignKey, func
-from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
+
+from sqlalchemy import ForeignKey, Integer, String, func
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app import db
 

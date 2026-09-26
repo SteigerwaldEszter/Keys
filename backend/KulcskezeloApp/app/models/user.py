@@ -1,10 +1,12 @@
 from __future__ import annotations
 
-from app.extensions import db
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, func, Integer
 from datetime import datetime
-from werkzeug.security import generate_password_hash, check_password_hash
+
+from sqlalchemy import Integer, String, func
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from werkzeug.security import check_password_hash, generate_password_hash
+
+from app.extensions import db
 
 
 class User(db.Model):
