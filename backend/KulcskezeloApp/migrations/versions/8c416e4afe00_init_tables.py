@@ -1,10 +1,11 @@
 """Init tables
 
 Revision ID: 8c416e4afe00
-Revises: 
+Revises:
 Create Date: 2026-09-25 18:20:02.673228
 
 """
+
 import sqlalchemy as sa
 from alembic import op
 
