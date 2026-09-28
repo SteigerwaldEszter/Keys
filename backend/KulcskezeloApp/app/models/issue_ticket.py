@@ -23,5 +23,5 @@ class IssueTicket(db.Model):
     status: Mapped[str] = mapped_column(String(50), default="open", nullable=False)
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
 
-    classroom = relationship("Classroom", back_populates="issue_tickets")
-    user = relationship("User", back_populates="issue_tickets")
+    classrooms = relationship("Classroom", back_populates="issue_tickets")
+    users = relationship("User", back_populates="issue_tickets")

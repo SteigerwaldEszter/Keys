@@ -15,5 +15,5 @@ class Key(db.Model):
     status: Mapped[str] = mapped_column(String(50), default="available", nullable=False)
     is_master: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
 
-    classroom = relationship("Classroom", back_populates="keys")
-    key_logs = relationship("KeyLog", back_populates="key")
+    classrooms = relationship("Classroom", back_populates="keys")
+    key_logs = relationship("KeyLog", back_populates="keys")

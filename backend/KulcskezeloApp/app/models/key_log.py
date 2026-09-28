@@ -28,12 +28,12 @@ class KeyLog(db.Model):
     action: Mapped[str] = mapped_column(String(50), nullable=False)
     timestamp: Mapped[datetime] = mapped_column(server_default=func.now())
 
-    key = relationship("Key", back_populates="key_logs")
-    reservation = relationship("Reservation", back_populates="key_logs")
-    handler = relationship(
+    keys = relationship("Key", back_populates="key_logs")
+    reservations = relationship("Reservation", back_populates="key_logs")
+    handlers = relationship(
         "User", foreign_keys=[handler_id], back_populates="handled_key_logs"
     )
-    receiver = relationship(
+    receivers = relationship(
         "User", foreign_keys=[receiver_id], back_populates="received_key_logs"
     )
-    signature = relationship("Signature", back_populates="key_logs")
+    signatures = relationship("Signature", back_populates="key_logs")

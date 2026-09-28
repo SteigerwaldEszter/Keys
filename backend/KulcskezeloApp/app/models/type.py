@@ -12,4 +12,4 @@ class Type(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(50), nullable=False)
 
-    room_types = relationship("RoomType", back_populates="type")
+    room_types = relationship("RoomType", back_populates="types")
