@@ -257,3 +257,6 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 
+#SSH
+.ssh/
+*.pem
