@@ -1,3 +1,5 @@
+from apiflask.fields import Integer, String
+from apiflask.validators import Email
 from marshmallow import Schema
 from apiflask.fields import String, Integer
 from apiflask.validators import Email
@@ -12,7 +14,7 @@ class RegisterRequestSchema(Schema):
     name = String(required=True)
     email = String(required=True, validate=Email())
     password = String(required=True)
-    role = String(load_default="instructor")
+    role = String(load_default="Instructor")
     pin = String(load_default=None)
 
 
