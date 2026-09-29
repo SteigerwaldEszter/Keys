@@ -1,7 +1,6 @@
-from apiflask import HTTPError
+from apiflask import HTTPError, APIBlueprint
 
 from app.blueprints import role_required
-from app.blueprints.auth import bp
 from app.blueprints.auth.schemas import (
     RegisterRequestSchema,
     TokenResponseSchema,
@@ -10,6 +9,8 @@ from app.blueprints.auth.schemas import (
 )
 from app.blueprints.auth.service import AuthService
 from app.extensions import auth
+
+bp = APIBlueprint("auth", __name__, tag="auth")
 
 
 @bp.route("/")

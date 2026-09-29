@@ -1,5 +1,4 @@
-from apiflask import APIBlueprint
+#from apiflask import APIBlueprint
+from .routes import bp
 
-bp = APIBlueprint("auth", __name__, tag="auth")
-
-from . import routes  # noqa: E402, F401
+__all__ = ["bp"]
