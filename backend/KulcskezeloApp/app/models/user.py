@@ -5,10 +5,12 @@ from datetime import datetime
 from sqlalchemy import Integer, String, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from werkzeug.security import check_password_hash, generate_password_hash
-from typing import List
+from typing import List, TYPE_CHECKING
 
-# from app.models.role import Role
 from app.extensions import db
+
+if TYPE_CHECKING:
+    from app.models.role import Role
 
 
 class User(db.Model):

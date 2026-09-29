@@ -1,14 +1,14 @@
-from app.models.audit_log import AuditLog
-from app.models.classroom import Classroom
-from app.models.issue_ticket import IssueTicket
-from app.models.key_log import KeyLog
-from app.models.key import Key
-from app.models.reservation import Reservation
-from app.models.role import Role
-from app.models.room_tool import RoomTool
-from app.models.room_type import RoomType
-from app.models.signature import Signature
-from app.models.tool import Tool
-from app.models.type import Type
-from app.models.user import User
-from app.models.user_role import UserRole
+from app.models.audit_log import AuditLog as AuditLog
+from app.models.classroom import Classroom as Classroom
+from app.models.issue_ticket import IssueTicket as IssueTicket
+from app.models.key_log import KeyLog as KeyLog
+from app.models.key import Key as Key
+from app.models.reservation import Reservation as Reservation
+from app.models.role import Role as Role
+from app.models.room_tool import RoomTool as RoomTool
+from app.models.room_type import RoomType as RoomType
+from app.models.signature import Signature as Signature
+from app.models.tool import Tool as Tool
+from app.models.type import Type as Type
+from app.models.user import User as User
+from app.models.user_role import UserRole as UserRole

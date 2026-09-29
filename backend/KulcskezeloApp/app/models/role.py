@@ -2,10 +2,12 @@ from __future__ import annotations
 
 from sqlalchemy import Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from typing import List
+from typing import List, TYPE_CHECKING
 
 from app import db
-# from app.models.user import User
+
+if TYPE_CHECKING:
+    from app.models.user import User
 
 
 class Role(db.Model):
