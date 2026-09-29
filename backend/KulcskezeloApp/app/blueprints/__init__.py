@@ -8,9 +8,10 @@ from flask import current_app
 from app.blueprints.auth import bp as bp_auth
 from app.extensions import auth
 
-bp = APIBlueprint('main', __name__, tag="main")
+bp = APIBlueprint("main", __name__, tag="main")
 
 bp.register_blueprint(bp_auth, url_prefix="/auth")
+
 
 @bp.route("/")
 def index():
@@ -53,4 +54,3 @@ def role_required(roles):
         return decorated_function
 
     return wrapper
-

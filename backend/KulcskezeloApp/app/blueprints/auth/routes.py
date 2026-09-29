@@ -1,13 +1,15 @@
 from apiflask import HTTPError
+
+from app.blueprints import role_required
 from app.blueprints.auth import bp
-from app.extensions import auth
 from app.blueprints.auth.schemas import (
-    UserLoginSchema,
     RegisterRequestSchema,
     TokenResponseSchema,
+    UserLoginSchema,
     UserResponseSchema,
 )
 from app.blueprints.auth.service import AuthService
+from app.extensions import auth
 
 
 @bp.route("/")
@@ -16,8 +18,8 @@ def index():
 
 
 @bp.post("/register")
-# @bp.auth_required(auth)
-# @role_required(['Admin'])
+@bp.auth_required(auth)
+@role_required(["Admin"])
 @bp.input(RegisterRequestSchema)
 @bp.output(UserResponseSchema)
 def register(json_data):

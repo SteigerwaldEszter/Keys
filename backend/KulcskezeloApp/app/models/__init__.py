@@ -1,8 +1,8 @@
 from app.models.audit_log import AuditLog as AuditLog
 from app.models.classroom import Classroom as Classroom
 from app.models.issue_ticket import IssueTicket as IssueTicket
-from app.models.key_log import KeyLog as KeyLog
 from app.models.key import Key as Key
+from app.models.key_log import KeyLog as KeyLog
 from app.models.reservation import Reservation as Reservation
 from app.models.role import Role as Role
 from app.models.room_tool import RoomTool as RoomTool

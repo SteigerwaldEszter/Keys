@@ -1,5 +1,5 @@
 from marshmallow import Schema
-from apiflask.fields import String, Email, Integer
+from apiflask.fields import String, Integer
 from apiflask.validators import Email
 
 
