@@ -16,8 +16,8 @@ def index():
 
 
 @bp.post("/register")
-# @bp.auth_required(auth)
-# @role_required(['Admin'])
+@bp.auth_required(auth)
+@role_required(["Admin"])
 @bp.input(RegisterRequestSchema)
 @bp.output(UserResponseSchema)
 def register(json_data):
