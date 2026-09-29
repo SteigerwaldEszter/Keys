@@ -1,9 +1,11 @@
-from app.models.user import User
-from app.models.role import Role
-from app.extensions import db
-from flask import current_app
-from authlib.jose import jwt
 from datetime import datetime, timedelta
+
+from authlib.jose import jwt
+from flask import current_app
+
+from app.extensions import db
+from app.models.role import Role
+from app.models.user import User
 
 
 class AuthService:

@@ -1,15 +1,13 @@
-from apiflask import APIBlueprint
-
-from app.models import *  # noqa: F403
-from apiflask import HTTPError
-from app.extensions import auth
-from flask import current_app
 from datetime import datetime
-from authlib.jose import jwt
 from functools import wraps
 
+from apiflask import APIBlueprint, HTTPError
+from authlib.jose import jwt
+from flask import current_app
 
 from app.blueprints.auth import bp as bp_auth
+from app.extensions import auth
+from app.models import *  # noqa: F403
 
 
 bp = APIBlueprint("main", __name__, tag="main")

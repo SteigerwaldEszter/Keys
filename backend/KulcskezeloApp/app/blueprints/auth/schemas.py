@@ -1,6 +1,6 @@
-from marshmallow import Schema
-from apiflask.fields import String, Integer
+from apiflask.fields import Integer, String
 from apiflask.validators import Email
+from marshmallow import Schema
 
 
 class UserLoginSchema(Schema):
