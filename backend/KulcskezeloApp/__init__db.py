@@ -29,7 +29,7 @@ def seed_database():
             db.drop_all()
             db.create_all()
             # Role
-            if not Role.query.filter_by(rolename="Admin").first():
+            if not Role.query.filter_by(name="Admin").first():
                 db.session.add_all(
                     [
                         Role(name="Admin"),
@@ -63,28 +63,28 @@ def seed_database():
                     "name": "Admin Adrián",
                     "password": "Password123",
                     "pin": "",
-                    "roles": ["Admin"],
+                    "roles": "Admin"
                 },
                 {
                     "email": "eloado.elod@teszt.hu",
                     "name": "Előadó Előd",
                     "password": "Password123",
                     "pin": "",
-                    "roles": ["Instructor"],
+                    "roles": "Instructor"
                 },
                 {
                     "email": "fnoi.feri@teszt.hu",
                     "name": "Főnök Ferenc",
                     "password": "Password123",
                     "pin": "",
-                    "roles": ["Director"],
+                    "roles": "Director"
                 },
                 {
                     "email": "portas@teszt.hu",
                     "name": "Portás Péter",
                     "password": "Password123",
                     "pin": "1234",
-                    "roles": ["Receptionist"],
+                    "roles": "Receptionist"
                 },
             ]
             # user
@@ -99,7 +99,7 @@ def seed_database():
                     db.session.add(user)
                     db.session.commit()
 
-                    role = Role.query.filter_by(name=u_data["role_name"]).first()
+                    role = Role.query.filter_by(name=u_data["roles"]).first()
                     if role:
                         user_role = UserRole(user_id=user.id, role_id=role.id)
                         db.session.add(user_role)
