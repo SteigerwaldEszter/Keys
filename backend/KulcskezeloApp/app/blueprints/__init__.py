@@ -1,9 +1,11 @@
-from apiflask import APIBlueprint, HTTPError
-from app.extensions import auth
-from authlib.jose import jwt
 from datetime import datetime
-from flask import current_app
 from functools import wraps
+
+from apiflask import APIBlueprint, HTTPError
+from authlib.jose import jwt
+from flask import current_app
+
+from app.extensions import auth
 
 
 bp = APIBlueprint("main", __name__, tag="main")
