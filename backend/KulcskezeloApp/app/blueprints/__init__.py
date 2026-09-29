@@ -9,6 +9,7 @@ from app.blueprints.auth import bp as bp_auth
 from app.extensions import auth
 
 bp = APIBlueprint("main", __name__, tag="main")
+
 bp.register_blueprint(bp_auth, url_prefix="/auth")
 
 

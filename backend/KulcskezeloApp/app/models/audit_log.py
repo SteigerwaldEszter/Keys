@@ -20,4 +20,4 @@ class AuditLog(db.Model):
     old_value: Mapped[str] = mapped_column(Text)
     timestamp: Mapped[datetime] = mapped_column(server_default=func.now())
 
-    user = relationship("User", back_populates="audit_logs")
+    users = relationship("User", back_populates="audit_logs")

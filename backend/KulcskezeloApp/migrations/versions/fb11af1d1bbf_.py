@@ -1,16 +1,16 @@
-"""Init tables
+"""empty message
 
-Revision ID: 8c416e4afe00
-Revises:
-Create Date: 2026-09-25 18:20:02.673228
+Revision ID: fb11af1d1bbf
+Revises: 
+Create Date: 2026-09-28 16:08:39.110545
 
 """
-
-import sqlalchemy as sa
 from alembic import op
+import sqlalchemy as sa
+
 
 # revision identifiers, used by Alembic.
-revision = "8c416e4afe00"
+revision = "fb11af1d1bbf"
 down_revision = None
 branch_labels = None
 depends_on = None

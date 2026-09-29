@@ -13,4 +13,4 @@ class Tool(db.Model):
     name: Mapped[str] = mapped_column(String(50), nullable=False)
     active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
 
-    room_tools = relationship("RoomTool", back_populates="tool")
+    room_tools = relationship("RoomTool", back_populates="tools")

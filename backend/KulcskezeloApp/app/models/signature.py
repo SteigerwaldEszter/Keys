@@ -16,4 +16,4 @@ class Signature(db.Model):
     payload: Mapped[str] = mapped_column(Text, nullable=False)
     signed_at: Mapped[datetime] = mapped_column(server_default=func.now())
 
-    key_log = relationship("KeyLog", back_populates="signature")
+    key_logs = relationship("KeyLog", back_populates="signatures")

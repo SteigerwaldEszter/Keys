@@ -13,8 +13,8 @@ class Classroom(db.Model):
     capacity: Mapped[int] = mapped_column(Integer, nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
 
-    room_types = relationship("RoomType", back_populates="classroom")
-    room_tools = relationship("RoomTool", back_populates="classroom")
-    keys = relationship("Key", back_populates="classroom")
-    reservations = relationship("Reservation", back_populates="classroom")
-    issue_tickets = relationship("IssueTicket", back_populates="classroom")
+    room_types = relationship("RoomType", back_populates="classrooms")
+    room_tools = relationship("RoomTool", back_populates="classrooms")
+    keys = relationship("Key", back_populates="classrooms")
+    reservations = relationship("Reservation", back_populates="classrooms")
+    issue_tickets = relationship("IssueTicket", back_populates="classrooms")

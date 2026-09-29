@@ -17,5 +17,5 @@ class RoomTool(db.Model):
     )
     quantity: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
 
-    classroom = relationship("Classroom", back_populates="room_tools")
-    tool = relationship("Tool", back_populates="room_tools")
+    classrooms = relationship("Classroom", back_populates="room_tools")
+    tools = relationship("Tool", back_populates="room_tools")

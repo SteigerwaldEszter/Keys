@@ -21,6 +21,6 @@ class Reservation(db.Model):
         DateTime, default=datetime.now, nullable=False
     )
 
-    classroom = relationship("Classroom", back_populates="reservations")
-    user = relationship("User", back_populates="reservations")
-    key_logss = relationship("KeyLog", back_populates="reservation")
+    classrooms = relationship("Classroom", back_populates="reservations")
+    users = relationship("User", back_populates="reservations")
+    key_logs = relationship("KeyLog", back_populates="reservations")
