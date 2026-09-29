@@ -1,4 +1,4 @@
-from apiflask import HTTPError, APIBlueprint
+from apiflask import APIBlueprint, HTTPError
 
 from app.blueprints import role_required
 from app.blueprints.auth.schemas import (
