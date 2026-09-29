@@ -17,7 +17,9 @@ def create_app(config_class=Config):
 
     # Blueprints
     from app.blueprints import bp as bp_default
+    from app.blueprints.auth import bp as bp_auth
 
     app.register_blueprint(bp_default, url_prefix="/api")
+    app.register_blueprint(bp_auth, url_prefix="/api/auth")
 
     return app
