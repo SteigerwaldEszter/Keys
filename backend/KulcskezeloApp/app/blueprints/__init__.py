@@ -5,7 +5,6 @@ from apiflask import APIBlueprint, HTTPError
 from authlib.jose import jwt
 from flask import current_app
 
-# from app.blueprints.auth import bp as bp_auth
 from app.extensions import auth
 
 bp = APIBlueprint("main", __name__, tag="main")
@@ -40,7 +39,7 @@ def role_required(roles):
                 for item in auth.current_user.get("roles", [])
             ]
 
-            # teszteléshez
+            # Teszteléshez
             print(f"debug: elvárt: {roles}, user roles: {user_roles}")
 
             for role in roles:
@@ -52,6 +51,3 @@ def role_required(roles):
         return decorated_function
 
     return wrapper
-
-
-# bp.register_blueprint(bp_auth, url_prefix="/auth")

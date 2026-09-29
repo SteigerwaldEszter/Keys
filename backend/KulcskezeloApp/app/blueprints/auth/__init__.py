@@ -1,3 +1,3 @@
-from apiflask import APIBlueprint
+from .routes import bp
 
-bp = APIBlueprint("auth", __name__, tag="auth")
+__all__ = ["bp"]
