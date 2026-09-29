@@ -12,7 +12,7 @@ def create_app(config_class=Config):
 
     # Extensions
     db.init_app(app)
-    migrate = Migrate(app, db)
+    Migrate(app, db)
 
     # Blueprints
     from app.blueprints import bp as bp_default

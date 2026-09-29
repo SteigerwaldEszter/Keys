@@ -1,13 +1,19 @@
 from apiflask import APIBlueprint
 
-bp = APIBlueprint("main", __name__, tag="main")
-from app.models import *
+from app.models import *  # noqa: F403
 from apiflask import HTTPError
 from app.extensions import auth
 from flask import current_app
 from datetime import datetime
 from authlib.jose import jwt
 from functools import wraps
+
+
+from app.blueprints.auth import bp as bp_auth
+
+
+bp = APIBlueprint("main", __name__, tag="main")
+bp.register_blueprint(bp_auth, url_prefix="/auth")
 
 
 @bp.route("/")
@@ -51,9 +57,3 @@ def role_required(roles):
         return decorated_function
 
     return wrapper
-
-
-# Registrate blueprints here...
-from app.blueprints.auth import bp as bp_auth
-
-bp.register_blueprint(bp_auth, url_prefix="/auth")

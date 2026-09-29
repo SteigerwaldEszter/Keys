@@ -20,7 +20,7 @@ class AuthService:
         if not role_obj:
             return False, f"A '{role}' szerepkör nem található az adatbázisban!"
 
-        if role == "receptionist":
+        if role == "Receptionist":
             if not pin:
                 return (
                     False,
