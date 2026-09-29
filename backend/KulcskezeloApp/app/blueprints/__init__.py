@@ -7,7 +7,6 @@ from flask import current_app
 
 from app.blueprints.auth import bp as bp_auth
 from app.extensions import auth
-from app.models import a
 
 
 bp = APIBlueprint("main", __name__, tag="main")
