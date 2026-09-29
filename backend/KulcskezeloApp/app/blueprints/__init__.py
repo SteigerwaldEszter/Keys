@@ -8,6 +8,7 @@ from flask import current_app
 from app.extensions import auth
 
 
+
 bp = APIBlueprint("main", __name__, tag="main")
 
 
