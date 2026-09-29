@@ -1,5 +1,6 @@
 from apiflask import APIBlueprint
-bp = APIBlueprint('main', __name__, tag="main")
+
+bp = APIBlueprint("main", __name__, tag="main")
 from app.models import *
 from apiflask import HTTPError
 from app.extensions import auth
@@ -52,6 +53,7 @@ def role_required(roles):
     return wrapper
 
 
-#Registrate blueprints here...
+# Registrate blueprints here...
 from app.blueprints.auth import bp as bp_auth
-bp.register_blueprint(bp_auth, url_prefix='/auth')
+
+bp.register_blueprint(bp_auth, url_prefix="/auth")
