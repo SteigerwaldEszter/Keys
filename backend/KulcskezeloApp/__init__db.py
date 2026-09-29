@@ -63,28 +63,28 @@ def seed_database():
                     "name": "Admin Adrián",
                     "password": "Password123",
                     "pin": "",
-                    "roles": "Admin"
+                    "roles": "Admin",
                 },
                 {
                     "email": "eloado.elod@teszt.hu",
                     "name": "Előadó Előd",
                     "password": "Password123",
                     "pin": "",
-                    "roles": "Instructor"
+                    "roles": "Instructor",
                 },
                 {
                     "email": "fnoi.feri@teszt.hu",
                     "name": "Főnök Ferenc",
                     "password": "Password123",
                     "pin": "",
-                    "roles": "Director"
+                    "roles": "Director",
                 },
                 {
                     "email": "portas@teszt.hu",
                     "name": "Portás Péter",
                     "password": "Password123",
                     "pin": "1234",
-                    "roles": "Receptionist"
+                    "roles": "Receptionist",
                 },
             ]
             # user
