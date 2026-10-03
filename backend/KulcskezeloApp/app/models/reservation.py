@@ -13,7 +13,9 @@ class Reservation(db.Model):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
-    room_id: Mapped[str] = mapped_column(String(10), ForeignKey("classrooms.id"), nullable=False)
+    room_id: Mapped[str] = mapped_column(
+        String(10), ForeignKey("classrooms.id"), nullable=False
+    )
     start_time: Mapped[datetime] = mapped_column(DateTime, nullable=False)
     end_time: Mapped[datetime] = mapped_column(DateTime, nullable=False)
     status: Mapped[str] = mapped_column(String(50), nullable=False)
