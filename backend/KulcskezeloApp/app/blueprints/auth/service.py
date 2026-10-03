@@ -65,7 +65,11 @@ class AuthService:
         user = User.query.get(user_id)
         if not user:
             return False, "A keresett felhasználó nem található."
-        return True, {"id": user.id, "name": user.name, "roles": [r.name for r in user.roles]}
+        return True, {
+            "id": user.id,
+            "name": user.name,
+            "roles": [r.name for r in user.roles],
+        }
 
     @staticmethod
     def delete_user(user_id):

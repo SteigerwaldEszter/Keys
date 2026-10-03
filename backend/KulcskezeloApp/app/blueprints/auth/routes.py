@@ -54,6 +54,7 @@ def get_me():
     user = User.query.get(token_auth.current_user["user_id"])
     return {"id": user.id, "name": user.name, "roles": [r.name for r in user.roles]}
 
+
 @bp.delete("/delete/<int:id>")
 @bp.auth_required(token_auth)
 @role_required(["Admin"])
