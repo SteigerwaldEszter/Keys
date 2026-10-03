@@ -12,7 +12,6 @@ from app.models.key_log import KeyLog
 from app.models.reservation import Reservation
 from app.models.role import Role
 from app.models.room_tool import RoomTool
-from app.models.room_type import RoomType
 from app.models.signature import Signature
 from app.models.tool import Tool
 from app.models.type import Type
@@ -42,7 +41,8 @@ def seed_database():
             # Type
             if not Type.query.filter_by(name="Labor").first():
                 db.session.add_all(
-                    [Type(id=1, name="Lab"), Type(id=2, name="Seminar Room")]
+                    [Type(id=1, name="Lab", description="Speciális eszközökkel és számítógépekkel felszerelt terem gyakorlati órákhoz."), 
+                     Type(id=2, name="Seminar Room", description="Kisebb létszámú, interaktív csoportfoglalkozásokra és prezentációkra optimalizált terem.")]
                 )
                 db.session.commit()
             # Tool
@@ -105,26 +105,21 @@ def seed_database():
                         db.session.add(user_role)
                         db.session.commit()
             # Classroom
-            if not Classroom.query.first():
-                c1 = Classroom(capacity=60, is_active=True)
-                c2 = Classroom(capacity=24, is_active=True)
-                c3 = Classroom(capacity=16, is_active=True)
-                db.session.add_all([c1, c2, c3])
-                db.session.commit()
-            # room type
-            c1 = Classroom.query.filter_by(capacity=60).first()
-            c2 = Classroom.query.filter_by(capacity=24).first()
             t_lab = Type.query.filter_by(name="Lab").first()
             t_seminar = Type.query.filter_by(name="Seminar Room").first()
 
-            if not RoomType.query.first() and c1 and c2 and t_lab and t_seminar:
-                db.session.add_all(
-                    [
-                        RoomType(room_id=c1.id, type_id=t_seminar.id),
-                        RoomType(room_id=c2.id, type_id=t_lab.id),
-                    ]
-                )
+   
+            if not Classroom.query.first() and t_lab and t_seminar:
+                c1 = Classroom(id="I1", capacity=60, is_active=True, room_type=t_seminar.id)
+                c2 = Classroom(id="PC0", capacity=24, is_active=True, room_type=t_lab.id)
+                c3 = Classroom(id="I3", capacity=16, is_active=True, room_type=t_lab.id)
+
+                db.session.add_all([c1, c2, c3])
                 db.session.commit()
+
+
+
+            
             # roomtool
             tool_proj = Tool.query.filter_by(name="Projector").first()
             tool_pen = Tool.query.filter_by(name="Whiteboard marker").first()

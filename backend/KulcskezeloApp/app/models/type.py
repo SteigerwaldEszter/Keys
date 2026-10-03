@@ -11,5 +11,6 @@ class Type(db.Model):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(50), nullable=False)
+    description: Mapped[str] = mapped_column(String(255), nullable=True)
 
-    room_types = relationship("RoomType", back_populates="types")
+    classrooms = relationship("Classroom", back_populates="types")

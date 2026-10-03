@@ -6,7 +6,6 @@ from app.models.key_log import KeyLog as KeyLog
 from app.models.reservation import Reservation as Reservation
 from app.models.role import Role as Role
 from app.models.room_tool import RoomTool as RoomTool
-from app.models.room_type import RoomType as RoomType
 from app.models.signature import Signature as Signature
 from app.models.tool import Tool as Tool
 from app.models.type import Type as Type

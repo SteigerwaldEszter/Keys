@@ -12,8 +12,8 @@ class IssueTicket(db.Model):
     __tablename__ = "issue_tickets"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    room_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("classrooms.id"), nullable=False
+    room_id: Mapped[str] = mapped_column(
+        String(10), ForeignKey("classrooms.id"), nullable=False
     )
     user_id: Mapped[int] = mapped_column(
         Integer, ForeignKey("users.id"), nullable=False

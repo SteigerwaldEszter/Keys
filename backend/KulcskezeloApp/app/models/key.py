@@ -10,7 +10,7 @@ class Key(db.Model):
     __tablename__ = "keys"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    room_id: Mapped[int] = mapped_column(ForeignKey("classrooms.id"), nullable=False)
+    room_id: Mapped[str] = mapped_column(String(10), ForeignKey("classrooms.id"), nullable=False)
     name: Mapped[str] = mapped_column(String(20), nullable=False)
     status: Mapped[str] = mapped_column(String(50), default="available", nullable=False)
     is_master: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
