@@ -10,7 +10,7 @@ class ClassroomService:
     @staticmethod
     def get_filtered_classrooms(filters):
         try:
-            query = Classroom.query.filter(Classroom.is_active == True)
+            query = Classroom.query.filter(Classroom.is_active)
 
             # Capacity filter
             capacity_min = filters.get("capacity_min")
@@ -101,7 +101,7 @@ class ClassroomService:
             return True, new_classroom
         except Exception as e:
             db.session.rollback()
-            return False, str(e)  # "Hiba a terem létrehozásakor." str(e)
+            return False, str(e)
 
     @staticmethod
     def update_classroom(classroom_id, data):
@@ -120,31 +120,25 @@ class ClassroomService:
             if "tools_ids" in data:
                 incoming_ids = data["tools_ids"]
 
-                # A .get() üres listát ad vissza, ha a kulcs nem szerepel a kérésben
                 incoming_qtys = data.get("tool_quantity", [])
                 incoming_acts = data.get("tool_active", [])
 
-                # Jelenlegi eszközök lekérése és szótárba rendezése a gyors eléréshez
                 current_room_tools = RoomTool.query.filter_by(
                     classroom_id=classroom.id
                 ).all()
                 current_tools_dict = {rt.tool_id: rt for rt in current_room_tools}
 
-                # 1. Bejövő ID-k feldolgozása (hozzáadás és frissítés)
                 for i, tool_id in enumerate(incoming_ids):
-                    # Megnézzük, kaptunk-e az adott indexhez tartozó quantity-t / active státuszt
                     new_qty = incoming_qtys[i] if i < len(incoming_qtys) else None
                     new_act = incoming_acts[i] if i < len(incoming_acts) else None
 
                     if tool_id in current_tools_dict:
-                        # MÁR LÉTEZŐ ESZKÖZ -> Csak azt írjuk felül, amit tényleg megadott a kliens
                         rt = current_tools_dict[tool_id]
                         if new_qty is not None:
                             rt.quantity = new_qty
                         if new_act is not None:
                             rt.active = new_act
                     else:
-                        # ÚJ ESZKÖZ -> Ha nem küldött adatot, alapértelmezéseket használunk
                         new_room_tool = RoomTool(
                             classroom_id=classroom.id,
                             tool_id=tool_id,

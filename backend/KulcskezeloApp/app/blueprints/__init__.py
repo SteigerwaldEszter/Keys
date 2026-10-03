@@ -51,4 +51,3 @@ def role_required(roles):
         return decorated_function
 
     return wrapper
-
