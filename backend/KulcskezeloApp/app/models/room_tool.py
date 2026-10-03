@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from sqlalchemy import ForeignKey, Integer
+from sqlalchemy import ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app import db
@@ -9,8 +9,8 @@ from app import db
 class RoomTool(db.Model):
     __tablename__ = "room_tools"
 
-    classroom_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("classrooms.id"), primary_key=True
+    classroom_id: Mapped[str] = mapped_column(
+        String(10), ForeignKey("classrooms.id"), primary_key=True
     )
     tool_id: Mapped[int] = mapped_column(
         Integer, ForeignKey("tools.id"), primary_key=True
