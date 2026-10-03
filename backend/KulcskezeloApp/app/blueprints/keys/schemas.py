@@ -9,6 +9,7 @@ class KeyOutSchema(Schema):
     status = String()
     is_master = Boolean()
 
+
 class KeyCreateUpdateSchema(Schema):
     room_id = String(required=True)
     name = String(required=True)

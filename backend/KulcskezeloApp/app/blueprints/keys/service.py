@@ -6,12 +6,12 @@ from app.models.signature import Signature
 
 
 def get_all_keys():
-    #Összes kulcs lekérése státusszal és mesterkulcs jelöléssel
+    # Összes kulcs lekérése státusszal és mesterkulcs jelöléssel
     return Key.query.all()
 
 
 def create_or_update_key(key_data, key_id=None):
-    #Kulcstörzs és mesterkulcs mentése (Admin)
+    # Kulcstörzs és mesterkulcs mentése (Admin)
     if key_id:
         key = Key.query.get_or_404(key_id)
         key.room_id = key_data.get("room_id", key.room_id)
