@@ -1,3 +1,5 @@
+from apiflask import abort
+
 from app.extensions import db
 from app.models.key import Key
 from app.models.key_log import KeyLog
@@ -41,6 +43,10 @@ def issue_key_action(
     handler_user_id: int,
 ):
     key = Key.query.get_or_404(key_id)
+
+    if key.status == "handed_out":
+        abort(400, "Ez a kulcs már ki van adva!")
+
     Reservation.query.get_or_404(reservation_id)
 
     # 1. Aláírás / jóváhagyás rögzítése
