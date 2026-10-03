@@ -45,12 +45,18 @@ def seed_database():
                         Type(
                             id=1,
                             name="Lab",
-                            description="Speciális eszközökkel és számítógépekkel felszerelt terem gyakorlati órákhoz.",
+                            description=(
+                                "Speciális eszközökkel és számítógépekkel felszerelt terem "
+                                "gyakorlati órákhoz."
+                            ),
                         ),
                         Type(
                             id=2,
                             name="Seminar Room",
-                            description="Kisebb létszámú, interaktív csoportfoglalkozásokra és prezentációkra optimalizált terem.",
+                            description=(
+                                "Kisebb létszámú, interaktív csoportfoglalkozásokra és "
+                                "prezentációkra optimalizált terem."
+                            ),
                         ),
                     ]
                 )
