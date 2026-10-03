@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 716e75c8254b
+Revision ID: e631bda97a72
 Revises: 
-Create Date: 2026-10-03 11:23:45.861212
+Create Date: 2026-10-03 15:31:03.909592
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = "716e75c8254b"
+revision = "e631bda97a72"
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -39,7 +39,6 @@ def upgrade():
         "tools",
         sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
         sa.Column("name", sa.String(length=50), nullable=False),
-        sa.Column("active", sa.Boolean(), nullable=False),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_table(
@@ -55,7 +54,7 @@ def upgrade():
         sa.Column("name", sa.String(length=100), nullable=False),
         sa.Column("email", sa.String(length=150), nullable=False),
         sa.Column("password_hash", sa.String(length=255), nullable=False),
-        sa.Column("pin_hash", sa.String(length=255), nullable=False),
+        sa.Column("pin_hash", sa.String(length=255), nullable=True),
         sa.Column(
             "created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=False
         ),
@@ -166,6 +165,7 @@ def upgrade():
         sa.Column("classroom_id", sa.String(length=10), nullable=False),
         sa.Column("tool_id", sa.Integer(), nullable=False),
         sa.Column("quantity", sa.Integer(), nullable=False),
+        sa.Column("active", sa.Boolean(), nullable=False),
         sa.ForeignKeyConstraint(
             ["classroom_id"],
             ["classrooms.id"],

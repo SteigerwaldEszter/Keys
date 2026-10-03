@@ -22,11 +22,10 @@ class User(db.Model):
         secondary="user_roles", back_populates="users"
     )
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
-    pin_hash: Mapped[str] = mapped_column(String(255))
+    pin_hash: Mapped[str | None] = mapped_column(String(255))
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
 
     issue_tickets = relationship("IssueTicket", back_populates="users")
-    # user_roles = relationship("UserRole", back_populates="users")
     audit_logs = relationship("AuditLog", back_populates="users")
     reservations = relationship("Reservation", back_populates="users")
 
