@@ -65,10 +65,10 @@ def seed_database():
             if not Tool.query.filter_by(name="Projector").first():
                 db.session.add_all(
                     [
-                        Tool(id=1, name="Projector", active=True),
-                        Tool(id=2, name="Interactive Whiteboard", active=True),
-                        Tool(id=3, name="Whiteboard marker", active=True),
-                        Tool(id=4, name="Remote Controller", active=False),
+                        Tool(id=1, name="Projector"),
+                        Tool(id=2, name="Interactive Whiteboard"),
+                        Tool(id=3, name="Whiteboard marker"),
+                        Tool(id=4, name="Remote Controller"),
                     ]
                 )
                 db.session.commit()
@@ -143,9 +143,9 @@ def seed_database():
             if not RoomTool.query.first() and tool_proj and tool_pen and c1 and c2:
                 db.session.add_all(
                     [
-                        RoomTool(classroom_id=c1.id, tool_id=tool_proj.id, quantity=1),
-                        RoomTool(classroom_id=c1.id, tool_id=tool_pen.id, quantity=4),
-                        RoomTool(classroom_id=c2.id, tool_id=tool_proj.id, quantity=1),
+                        RoomTool(classroom_id=c1.id, tool_id=tool_proj.id, quantity=1, active=True),
+                        RoomTool(classroom_id=c1.id, tool_id=tool_pen.id, quantity=4, active=True),
+                        RoomTool(classroom_id=c2.id, tool_id=tool_proj.id, quantity=1, active=True),
                     ]
                 )
                 db.session.commit()
