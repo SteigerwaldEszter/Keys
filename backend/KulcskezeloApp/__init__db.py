@@ -46,8 +46,8 @@ def seed_database():
                             id=1,
                             name="Lab",
                             description=(
-                                "Speciális eszközökkel és számítógépekkel felszerelt terem "
-                                "gyakorlati órákhoz."
+                                "Speciális eszközökkel és számítógépekkel "
+                                "felszerelt terem gyakorlati órákhoz."
                             ),
                         ),
                         Type(
