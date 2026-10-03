@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from sqlalchemy import ForeignKey, Integer, String
+from sqlalchemy import ForeignKey, Integer, String, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app import db
@@ -16,6 +16,7 @@ class RoomTool(db.Model):
         Integer, ForeignKey("tools.id"), primary_key=True
     )
     quantity: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+    active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
 
     classrooms = relationship("Classroom", back_populates="room_tools")
     tools = relationship("Tool", back_populates="room_tools")
