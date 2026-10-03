@@ -143,9 +143,24 @@ def seed_database():
             if not RoomTool.query.first() and tool_proj and tool_pen and c1 and c2:
                 db.session.add_all(
                     [
-                        RoomTool(classroom_id=c1.id, tool_id=tool_proj.id, quantity=1, active=True),
-                        RoomTool(classroom_id=c1.id, tool_id=tool_pen.id, quantity=4, active=True),
-                        RoomTool(classroom_id=c2.id, tool_id=tool_proj.id, quantity=1, active=True),
+                        RoomTool(
+                            classroom_id=c1.id,
+                            tool_id=tool_proj.id,
+                            quantity=1,
+                            active=True,
+                        ),
+                        RoomTool(
+                            classroom_id=c1.id,
+                            tool_id=tool_pen.id,
+                            quantity=4,
+                            active=True,
+                        ),
+                        RoomTool(
+                            classroom_id=c2.id,
+                            tool_id=tool_proj.id,
+                            quantity=1,
+                            active=True,
+                        ),
                     ]
                 )
                 db.session.commit()
