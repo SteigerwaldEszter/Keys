@@ -15,7 +15,7 @@ class AuthService:
             return False, "E-mail már létezik!"
 
         password = data.pop("password")
-        role = data.pop("name")
+        role = data.pop("role")
         pin = data.pop("pin")
 
         role_obj = Role.query.filter_by(name=role).first()
@@ -52,11 +52,26 @@ class AuthService:
 
     @staticmethod
     def token_generate(user):
+        header = {"alg": "RS256"}
         payload = {
             "user_id": user.id,
-            "roles": [r.role for r in user.roles],
+            "roles": [r.name for r in user.roles],
             "exp": int((datetime.now() + timedelta(hours=8)).timestamp()),
         }
-        return jwt.encode(
-            {"alg": "RS256"}, payload, current_app.config["SECRET_KEY"]
-        ).decode()
+        return jwt.encode(header, payload, current_app.config["PRIVATE_KEY"])
+
+    @staticmethod
+    def get_me(user_id):
+        user = User.query.get(user_id)
+        if not user:
+            return False, "A keresett felhasználó nem található."
+        return True, {"id": user.id, "name": user.name, "roles": [r.name for r in user.roles]}
+
+    @staticmethod
+    def delete_user(user_id):
+        user = User.query.get(user_id)
+        if not user:
+            return False, "A keresett felhasználó nem található."
+        db.session.delete(user)
+        db.session.commit()
+        return True, None
