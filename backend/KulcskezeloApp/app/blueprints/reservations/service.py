@@ -58,8 +58,8 @@ class ReservationService:
 
                 if conflicting_reservation:
                     return False, (
-                        f"A foglalás sikertelen: Ütközés történt a(z) {week + 1}. héten "
-                        f"({current_start.strftime('%Y-%m-%d %H:%M')}). "
+                        f"A foglalás sikertelen: Ütközés történt a(z) {week + 1}. "
+                        f"héten ({current_start.strftime('%Y-%m-%d %H:%M')}). "
                         f"Kérjük, válasszon másik időpontot vagy termet."
                     )
 
@@ -76,7 +76,8 @@ class ReservationService:
             db.session.commit()
 
             return True, {
-                "message": f"Sikeresen létrejött {len(reservations_to_create)} db foglalás."
+                "message": f"Sikeresen létrejött {len(reservations_to_create)} "
+                f"db foglalás."
             }
 
         except Exception as e:
