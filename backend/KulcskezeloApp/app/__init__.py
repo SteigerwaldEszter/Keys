@@ -20,6 +20,7 @@ def create_app(config_class=Config):
     from app.blueprints.auth import bp as bp_auth
     from app.blueprints.classrooms import bp as bp_classrooms
     from app.blueprints.keys import bp as bp_keys
+    from app.blueprints.reservations import bp as bp_reservations
     from app.blueprints.tools import bp as bp_tools
 
     app.register_blueprint(bp_default, url_prefix="/api")
@@ -27,5 +28,6 @@ def create_app(config_class=Config):
     app.register_blueprint(bp_keys, url_prefix="/api/keys")
     app.register_blueprint(bp_classrooms, url_prefix="/api/classroom")
     app.register_blueprint(bp_tools, url_prefix="/api/tool")
+    app.register_blueprint(bp_reservations, url_prefix="/api/reservation")
 
     return app
