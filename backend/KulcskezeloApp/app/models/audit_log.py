@@ -5,7 +5,7 @@ from datetime import datetime
 from sqlalchemy import ForeignKey, Integer, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app import db
+from app.extensions import db
 
 
 class AuditLog(db.Model):
