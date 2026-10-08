@@ -8,8 +8,17 @@ def load_private_key():
 
     key_path = os.path.join(path, ".ssh", "private_key.pem")
 
-    with open(key_path, "r") as f:
-        return f.read()
+    with open(key_path, "rb") as f:
+        # return f.read()
+        key_data = f.read()
+
+        # Remove BOM if present
+        if key_data.startswith(b"\xef\xbb\xbf"):
+            key_data = key_data[3:]
+        key_data = key_data.replace(b"\r\n", b"\n")
+        key_data = key_data.strip()
+
+        return key_data
 
 
 class Config:
@@ -18,3 +27,4 @@ class Config:
         "DATABASE_URL"
     ) or "sqlite:///" + os.path.join(basedir, "app.db")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    PRIVATE_KEY = load_private_key()
