@@ -19,15 +19,15 @@ def list_issues():
 @bp.input(IssueCreateSchema)
 @bp.output(IssueOutSchema, status_code=201)
 @bp.auth_required(auth)
-def add_issue(data):
+def add_issue(json_data):
     # Új hibajegy felvétele meghibásodás vagy rendellenesség esetén
     current_user_id = auth.current_user["user_id"]
-    return create_issue(data, user_id=current_user_id)
+    return create_issue(json_data, user_id=current_user_id)
 
 
 @bp.put("/<int:issue_id>")
 @bp.input(IssueUpdateSchema)
 @bp.output(IssueOutSchema)
-def update_issue(issue_id, data):
+def update_issue(issue_id, json_data):
     # Hibajegy állapotának (pl. nyitott/megoldva) frissítése
-    return update_issue_status(issue_id, data["status"])
+    return update_issue_status(issue_id, json_data["status"])

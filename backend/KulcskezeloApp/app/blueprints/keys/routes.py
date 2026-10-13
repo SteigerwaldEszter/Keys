@@ -24,45 +24,45 @@ def list_keys():
     return get_all_keys()
 
 
-@bp.post("")
+@bp.post("/")
 @bp.input(KeyCreateUpdateSchema)
 @bp.output(KeyOutSchema, status_code=201)
-def create_key(data):
-    return create_or_update_key(data)
+def create_key(json_data):
+    return create_or_update_key(json_data)
 
 
 @bp.put("/<int:key_id>")
 @bp.input(KeyCreateUpdateSchema)
 @bp.output(KeyOutSchema)
-def update_key(key_id, data):
-    return create_or_update_key(data, key_id=key_id)
+def update_key(key_id, json_data):
+    return create_or_update_key(json_data, key_id=key_id)
 
 
 @bp.post("/<int:key_id>/issue")
 @bp.input(KeyIssueSchema)
 @bp.auth_required(auth)
-def issue_key(key_id, data):
+def issue_key(key_id, json_data):
     user_id = auth.current_user["user_id"]
     return issue_key_action(
         key_id=key_id,
-        reservation_id=data["reservation_id"],
-        receiver_id=data["receiver_id"],
-        auth_format=data["format"],
-        signature_payload=data["payload"],
+        reservation_id=json_data["reservation_id"],
+        receiver_id=json_data["receiver_id"],
+        auth_format=json_data["format"],
+        signature_payload=json_data["payload"],
         handler_user_id=user_id,
     ), 200
 
 
 @bp.post("/<int:key_id>/return")
 @bp.input(KeyReturnSchema)
-def return_key(key_id, data):
+def return_key(key_id, json_data):
     return (
         return_key_action(
             key_id=key_id,
-            reservation_id=data["reservation_id"],
-            receiver_id=data["receiver_id"],
-            auth_format=data["format"],
-            signature_payload=data["payload"],
+            reservation_id=json_data["reservation_id"],
+            receiver_id=json_data["receiver_id"],
+            auth_format=json_data["format"],
+            signature_payload=json_data["payload"],
             handler_user_id=1,
         ),
         200,
