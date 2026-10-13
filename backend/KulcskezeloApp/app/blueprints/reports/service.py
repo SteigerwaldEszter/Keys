@@ -52,7 +52,7 @@ def get_missing_keys():
 
 
 def get_audit_logs():
-    return AuditLog.query.order_by(AuditLog.created_at.desc()).all()
+    return AuditLog.query.order_by(AuditLog.timestamp.desc()).all()
 
 
 def setup_audit_logging():
