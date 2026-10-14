@@ -10,6 +10,7 @@ from .schemas import (
 )
 from .service import (
     create_or_update_key,
+    delete_key_action,
     get_all_keys,
     issue_key_action,
     return_key_action,
@@ -67,3 +68,8 @@ def return_key(key_id, json_data):
         ),
         200,
     )
+
+
+@bp.delete("/<int:key_id>")
+def delete_key(key_id):
+    return delete_key_action(key_id)
