@@ -11,6 +11,7 @@ class KeyOutSchema(Schema):
 
 
 class KeyCreateUpdateSchema(Schema):
+    id = Integer()
     room_id = String(required=True)
     name = String(required=True)
     is_master = Boolean(load_default=False)

@@ -82,12 +82,10 @@ def return_key_action(
 ):
     key = Key.query.get_or_404(key_id)
 
-    # 1. Visszavételi szignó mentése
     signature = Signature(format=auth_format, payload=signature_payload)
     db.session.add(signature)
     db.session.flush()
 
-    # 2. Naplóbejegyzés létrehozása
     log = KeyLog(
         key_id=key.id,
         reservation_id=reservation_id,
@@ -98,8 +96,26 @@ def return_key_action(
     )
     db.session.add(log)
 
-    # 3. Kulcs státusz szabaddá tétele
     key.status = "available"
 
     db.session.commit()
     return {"message": "Kulcs sikeresen visszavéve", "key_id": key.id}
+
+
+def delete_key_action(key_id: int):
+    key = Key.query.get(key_id)
+
+    if not key:
+        abort(404, message="A megadott kulcs nem található.")
+
+    try:
+        db.session.delete(key)
+        db.session.commit()
+        return {"message": "Kulcs sikeresen törölve.", "key_id": key_id}
+    except Exception:
+        db.session.rollback()
+        abort(
+            400,
+            message="Ezt a kulcsot nem lehet törölni, "
+            "mert már szerepel egy foglalásban vagy eseménynaplóban.",
+        )

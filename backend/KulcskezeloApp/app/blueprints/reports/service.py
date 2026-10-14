@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 
 from flask import has_request_context
@@ -55,6 +56,13 @@ def get_audit_logs():
     return AuditLog.query.order_by(AuditLog.timestamp.desc()).all()
 
 
+def get_model_data(model_instance):
+    data = {}
+    for column in model_instance.__table__.columns:
+        data[column.name] = getattr(model_instance, column.name)
+    return data
+
+
 def setup_audit_logging():
     def log_change(mapper, connection, target, action):
         if target.__tablename__ == "audit_logs":
@@ -71,11 +79,22 @@ def setup_audit_logging():
         if current_user_id is None:
             return
 
+        old_val = "{}"
+        new_val = "{}"
+
+        if action in ["INSERT", "UPDATE"]:
+            new_val = json.dumps(get_model_data(target), default=str)
+
+        if action == "DELETE":
+            old_val = json.dumps(get_model_data(target), default=str)
+
         audit_entry = AuditLog(
             entity_name=target.__tablename__,
             entity_value=str(getattr(target, "id", "")),
             action=action,
             user_id=current_user_id,
+            new_value=new_val,
+            old_value=old_val,
         )
         db.session.add(audit_entry)
 
