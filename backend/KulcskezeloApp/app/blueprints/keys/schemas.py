@@ -30,3 +30,18 @@ class KeyReturnSchema(Schema):
     receiver_id = Integer(required=True)
     format = String(load_default="SIGNATURE")
     payload = String(load_default="RETURNED_OK")
+
+
+class TempSignatureIn(Schema):
+    format = String(required=True)
+    payload = String(required=True)
+
+
+class TempSignatureOut(Schema):
+    status = String(required=True)
+    format = String()
+    payload = String()
+
+
+class MessageOut(Schema):
+    message = String(required=True)
