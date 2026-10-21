@@ -18,8 +18,10 @@ class MissingKeySchema(Schema):
 
 class AuditLogOutSchema(Schema):
     id = Integer()
-    entity_name = String()
-    entity_id = Integer()
+    user_id = Integer(allow_none=True)
     action = String()
-    created_at = DateTime()
-    user_id = Integer()
+    entity_name = String()
+    entity_value = String(allow_none=True)
+    old_value = String(allow_none=True)
+    new_value = String(allow_none=True)
+    timestamp = DateTime()

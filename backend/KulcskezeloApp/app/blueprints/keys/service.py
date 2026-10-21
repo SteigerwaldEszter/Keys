@@ -8,12 +8,10 @@ from app.models.signature import Signature
 
 
 def get_all_keys():
-    # Összes kulcs lekérése státusszal és mesterkulcs jelöléssel
     return Key.query.all()
 
 
 def create_or_update_key(key_data, key_id=None):
-    # Kulcstörzs és mesterkulcs mentése (Admin)
     if key_id:
         key = Key.query.get_or_404(key_id)
         key.room_id = key_data.get("room_id", key.room_id)
@@ -34,7 +32,7 @@ def create_or_update_key(key_data, key_id=None):
     return key
 
 
-def issue_key_action(
+def handover_key_action(
     key_id: int,
     reservation_id: int,
     receiver_id: int,
@@ -49,12 +47,10 @@ def issue_key_action(
 
     Reservation.query.get_or_404(reservation_id)
 
-    # 1. Aláírás / jóváhagyás rögzítése
     signature = Signature(format=auth_format, payload=signature_payload)
     db.session.add(signature)
     db.session.flush()
 
-    # 2. Naplóbejegyzés létrehozása
     log = KeyLog(
         key_id=key.id,
         reservation_id=reservation_id,
@@ -65,7 +61,6 @@ def issue_key_action(
     )
     db.session.add(log)
 
-    # 3. Kulcs státusz frissítése
     key.status = "handed_out"
 
     db.session.commit()

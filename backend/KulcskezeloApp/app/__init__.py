@@ -14,7 +14,6 @@ def create_app(config_class=Config):
     # Extensions
     db.init_app(app)
     Migrate(app, db)
-    from app.blueprints.reports.service import setup_audit_logging
 
     setup_audit_logging()
 

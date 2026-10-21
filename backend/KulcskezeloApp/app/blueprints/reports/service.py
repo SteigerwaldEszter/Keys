@@ -55,64 +55,45 @@ def get_missing_keys():
 def get_audit_logs():
     return AuditLog.query.order_by(AuditLog.timestamp.desc()).all()
 
-
-def get_model_data(model_instance):
-    data = {}
-    for column in model_instance.__table__.columns:
-        data[column.name] = getattr(model_instance, column.name)
-    return data
-
-
-def setup_audit_logging():
-    def log_change(mapper, connection, target, action):
-        if target.__tablename__ == "audit_logs":
-            return
-
-        current_user_id = None
-        if (
-            has_request_context()
-            and hasattr(auth, "current_user")
-            and auth.current_user
-        ):
-            current_user_id = auth.current_user.get("user_id")
-
-        if current_user_id is None:
-            return
-
-        old_val = "{}"
-        new_val = "{}"
-
-        if action in ["INSERT", "UPDATE"]:
-            new_val = json.dumps(get_model_data(target), default=str)
-
-        if action == "DELETE":
-            old_val = json.dumps(get_model_data(target), default=str)
-
-        audit_entry = AuditLog(
-            entity_name=target.__tablename__,
-            entity_value=str(getattr(target, "id", "")),
-            action=action,
-            user_id=current_user_id,
-            new_value=new_val,
-            old_value=old_val,
+    def create_audit_log(
+    action,
+    entity_name,
+    entity_value=None,
+    user_id=None,
+    old_value=None,
+    new_value=None
+):
+    audit_entry = AuditLog(
+        user_id=user_id,
+        action=action,
+        entity_name=entity_name,
+        entity_value=(
+            str(entity_value)
+            if entity_value is not None
+            else None
+        ),
+        old_value=(
+            json.dumps(old_value, default=str, ensure_ascii=False)
+            if old_value is not None
+            else None
+        ),
+        new_value=(
+            json.dumps(new_value, default=str, ensure_ascii=False)
+            if new_value is not None
+            else None
         )
-        db.session.add(audit_entry)
+    )
 
-    event.listen(
-        db.Model,
-        "after_insert",
-        lambda m, c, t: log_change(m, c, t, "INSERT"),
-        propagate=True,
-    )
-    event.listen(
-        db.Model,
-        "after_update",
-        lambda m, c, t: log_change(m, c, t, "UPDATE"),
-        propagate=True,
-    )
-    event.listen(
-        db.Model,
-        "after_delete",
-        lambda m, c, t: log_change(m, c, t, "DELETE"),
-        propagate=True,
+    db.session.add(audit_entry)
+    return audit_entry
+
+
+def get_audit_logs():
+    return (
+        AuditLog.query
+        .order_by(
+            AuditLog.timestamp.desc(),
+            AuditLog.id.desc()
+        )
+        .all()
     )
