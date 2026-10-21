@@ -10,8 +10,8 @@ bp = APIBlueprint("issues", __name__, url_prefix="/api/issues")
 
 @bp.get("")
 @bp.output(IssueOutSchema(many=True))
+@bp.auth_required(auth)
 def list_issues():
-    # Hibajegyek listázása
     return get_all_issues()
 
 
@@ -20,7 +20,6 @@ def list_issues():
 @bp.output(IssueOutSchema, status_code=201)
 @bp.auth_required(auth)
 def add_issue(json_data):
-    # Új hibajegy felvétele meghibásodás vagy rendellenesség esetén
     current_user_id = auth.current_user["user_id"]
     return create_issue(json_data, user_id=current_user_id)
 
@@ -28,6 +27,6 @@ def add_issue(json_data):
 @bp.put("/<int:issue_id>")
 @bp.input(IssueUpdateSchema)
 @bp.output(IssueOutSchema)
+@bp.auth_required(auth)
 def update_issue(issue_id, json_data):
-    # Hibajegy állapotának (pl. nyitott/megoldva) frissítése
     return update_issue_status(issue_id, json_data["status"])

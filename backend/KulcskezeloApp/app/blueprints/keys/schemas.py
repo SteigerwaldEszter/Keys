@@ -18,7 +18,7 @@ class KeyCreateUpdateSchema(Schema):
     status = String(load_default="available")
 
 
-class KeyIssueSchema(Schema):
+class KeyHandoverSchema(Schema):
     reservation_id = Integer(required=True)
     receiver_id = Integer(required=True)
     format = String(required=True)

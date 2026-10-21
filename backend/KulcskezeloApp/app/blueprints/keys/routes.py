@@ -1,10 +1,11 @@
 from apiflask import APIBlueprint
 
+from app.blueprints import role_required
 from app.extensions import auth
 
 from .schemas import (
     KeyCreateUpdateSchema,
-    KeyIssueSchema,
+    KeyHandoverSchema,
     KeyOutSchema,
     KeyReturnSchema,
 )
@@ -21,6 +22,7 @@ bp = APIBlueprint("keys", __name__, url_prefix="/api/keys")
 
 @bp.get("")
 @bp.output(KeyOutSchema(many=True))
+@bp.auth_required(auth)
 def list_keys():
     return get_all_keys()
 
@@ -28,6 +30,8 @@ def list_keys():
 @bp.post("/")
 @bp.input(KeyCreateUpdateSchema)
 @bp.output(KeyOutSchema, status_code=201)
+@bp.auth_required(auth)
+@role_required("Admin")
 def create_key(json_data):
     return create_or_update_key(json_data)
 
@@ -35,13 +39,16 @@ def create_key(json_data):
 @bp.put("/<int:key_id>")
 @bp.input(KeyCreateUpdateSchema)
 @bp.output(KeyOutSchema)
+@bp.auth_required(auth)
+@role_required("Admin")
 def update_key(key_id, json_data):
     return create_or_update_key(json_data, key_id=key_id)
 
 
-@bp.post("/<int:key_id>/issue")
-@bp.input(KeyIssueSchema)
+@bp.post("/<int:key_id>/handover")
+@bp.input(KeyHandoverSchema)
 @bp.auth_required(auth)
+@role_required("Receptionist")
 def issue_key(key_id, json_data):
     user_id = auth.current_user["user_id"]
     return issue_key_action(
@@ -56,6 +63,8 @@ def issue_key(key_id, json_data):
 
 @bp.post("/<int:key_id>/return")
 @bp.input(KeyReturnSchema)
+@bp.auth_required(auth)
+@role_required("Receptionist")
 def return_key(key_id, json_data):
     return (
         return_key_action(
@@ -71,5 +80,7 @@ def return_key(key_id, json_data):
 
 
 @bp.delete("/<int:key_id>")
+@bp.auth_required(auth)
+@role_required("Admin")
 def delete_key(key_id):
     return delete_key_action(key_id)
