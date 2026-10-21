@@ -1,3 +1,5 @@
+import time
+
 from apiflask import abort
 
 from app.extensions import db
@@ -114,3 +116,34 @@ def delete_key_action(key_id: int):
             message="Ezt a kulcsot nem lehet törölni, "
             "mert már szerepel egy foglalásban vagy eseménynaplóban.",
         )
+
+
+temp_signatures_cache = {}
+
+
+def save_temp_signature_action(token, format_str, payload_str):
+
+    temp_signatures_cache[token] = {
+        "format": format_str,
+        "payload": payload_str,
+        "timestamp": time.time(),
+    }
+
+    # Régitokenek takarítása a memóriából
+    keys_to_delete = [
+        k
+        for k, v in temp_signatures_cache.items()
+        if time.time() - v["timestamp"] > 600
+    ]
+    for k in keys_to_delete:
+        del temp_signatures_cache[k]
+
+
+def check_temp_signature_action(token):
+
+    if token in temp_signatures_cache:
+        data = temp_signatures_cache.pop(token)
+
+        return {"status": "ready", "format": data["format"], "payload": data["payload"]}
+
+    return {"status": "waiting"}

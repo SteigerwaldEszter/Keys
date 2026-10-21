@@ -8,13 +8,18 @@ from .schemas import (
     KeyHandoverSchema,
     KeyOutSchema,
     KeyReturnSchema,
+    MessageOut,
+    TempSignatureIn,
+    TempSignatureOut,
 )
 from .service import (
+    check_temp_signature_action,
     create_or_update_key,
     delete_key_action,
     get_all_keys,
     handover_key_action,
     return_key_action,
+    save_temp_signature_action,
 )
 
 bp = APIBlueprint("keys", __name__, url_prefix="/api/keys")
@@ -83,3 +88,20 @@ def return_key(key_id, json_data):
 @role_required("Admin")
 def delete_key(key_id):
     return delete_key_action(key_id)
+
+
+@bp.post("/api/signature/<string:token>")
+@bp.input(TempSignatureIn)
+@bp.output(MessageOut, status_code=200)
+def save_temp_signature(token, json_data):
+    save_temp_signature_action(
+        token=token, format_str=json_data["format"], payload_str=json_data["payload"]
+    )
+    return {"message": "Sikeres mentés"}
+
+
+@bp.get("/api/signature/<string:token>")
+@bp.output(TempSignatureOut, status_code=200)
+def check_temp_signature(token):
+    result = check_temp_signature_action(token)
+    return result
