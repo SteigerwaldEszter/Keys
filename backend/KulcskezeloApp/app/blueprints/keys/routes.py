@@ -5,7 +5,7 @@ from app.extensions import auth
 
 from .schemas import (
     KeyCreateUpdateSchema,
-    KeyIssueSchema,
+    KeyHandoverSchema,
     KeyOutSchema,
     KeyReturnSchema,
 )

@@ -1,34 +1,24 @@
-
 from datetime import timedelta
 
 from app.extensions import db
 from app.models.reservation import Reservation
-
 from app.services.audit_log.service import create_audit_log
 
 
 class ReservationService:
-
     @staticmethod
     def get_reservations(current_user):
         try:
             roles = (
-                current_user.get("roles", [])
-                if isinstance(current_user, dict)
-                else []
+                current_user.get("roles", []) if isinstance(current_user, dict) else []
             )
 
-            if any(
-                role in roles
-                for role in ["Admin", "Director", "Receptionist"]
-            ):
+            if any(role in roles for role in ["Admin", "Director", "Receptionist"]):
                 reservations = Reservation.query.all()
             else:
                 user_id = current_user.get("user_id")
 
-                reservations = Reservation.query.filter_by(
-                    user_id=user_id
-                ).all()
+                reservations = Reservation.query.filter_by(user_id=user_id).all()
 
             return True, {"reservations": reservations}
 
@@ -48,20 +38,14 @@ class ReservationService:
                 return False, "A blokkok száma 1 és 6 között lehet."
 
             if recurring_weeks < 1 or recurring_weeks > 15:
-                return False, (
-                    "Az ismétlődések száma 1 és 15 hét között lehet."
-                )
+                return False, ("Az ismétlődések száma 1 és 15 hét között lehet.")
 
             reservations_to_create = []
 
             for week in range(recurring_weeks):
-                current_start = base_start_time + timedelta(
-                    weeks=week
-                )
+                current_start = base_start_time + timedelta(weeks=week)
 
-                current_end = current_start + timedelta(
-                    minutes=45 * duration_slots
-                )
+                current_end = current_start + timedelta(minutes=45 * duration_slots)
 
                 conflicting_reservation = Reservation.query.filter(
                     Reservation.room_id == room_id,
@@ -112,17 +96,14 @@ class ReservationService:
 
             return True, {
                 "message": (
-                    f"Sikeresen létrejött "
-                    f"{len(reservations_to_create)} db foglalás."
+                    f"Sikeresen létrejött {len(reservations_to_create)} db foglalás."
                 )
             }
 
         except Exception as e:
             db.session.rollback()
 
-            return False, (
-                f"Hiba a foglalás(ok) létrehozásakor: {e!s}"
-            )
+            return False, (f"Hiba a foglalás(ok) létrehozásakor: {e!s}")
 
     @staticmethod
     def update_status(reservation_id, new_status, current_user):
@@ -151,9 +132,7 @@ class ReservationService:
             reservation.status = new_status
 
             user_id = (
-                current_user.get("user_id")
-                if isinstance(current_user, dict)
-                else None
+                current_user.get("user_id") if isinstance(current_user, dict) else None
             )
 
             if new_status == "cancelled":
@@ -196,18 +175,14 @@ class ReservationService:
                 return False, "A keresett foglalás nem található."
 
             roles = (
-                current_user.get("roles", [])
-                if isinstance(current_user, dict)
-                else []
+                current_user.get("roles", []) if isinstance(current_user, dict) else []
             )
 
             user_id = current_user.get("user_id")
 
             if "Admin" not in roles:
                 if reservation.user_id != user_id:
-                    return False, (
-                        "Nincs jogosultsága a foglalás törléséhez."
-                    )
+                    return False, ("Nincs jogosultsága a foglalás törléséhez.")
 
             old_data = {
                 "user_id": reservation.user_id,
@@ -234,6 +209,4 @@ class ReservationService:
         except Exception as e:
             db.session.rollback()
 
-            return False, (
-                f"Hiba a foglalás törlésekor: {e!s}"
-            )
+            return False, (f"Hiba a foglalás törlésekor: {e!s}")

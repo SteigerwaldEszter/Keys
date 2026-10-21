@@ -1,10 +1,7 @@
 import json
 from datetime import datetime
 
-from flask import has_request_context
-from sqlalchemy import event
-
-from app.extensions import auth, db
+from app.extensions import db
 from app.models.audit_log import AuditLog
 from app.models.key import Key
 from app.models.key_log import KeyLog
@@ -52,26 +49,14 @@ def get_missing_keys():
     return missing_keys_list
 
 
-def get_audit_logs():
-    return AuditLog.query.order_by(AuditLog.timestamp.desc()).all()
-
-    def create_audit_log(
-    action,
-    entity_name,
-    entity_value=None,
-    user_id=None,
-    old_value=None,
-    new_value=None
+def create_audit_log(
+    action, entity_name, entity_value=None, user_id=None, old_value=None, new_value=None
 ):
     audit_entry = AuditLog(
         user_id=user_id,
         action=action,
         entity_name=entity_name,
-        entity_value=(
-            str(entity_value)
-            if entity_value is not None
-            else None
-        ),
+        entity_value=(str(entity_value) if entity_value is not None else None),
         old_value=(
             json.dumps(old_value, default=str, ensure_ascii=False)
             if old_value is not None
@@ -81,7 +66,7 @@ def get_audit_logs():
             json.dumps(new_value, default=str, ensure_ascii=False)
             if new_value is not None
             else None
-        )
+        ),
     )
 
     db.session.add(audit_entry)
@@ -89,11 +74,4 @@ def get_audit_logs():
 
 
 def get_audit_logs():
-    return (
-        AuditLog.query
-        .order_by(
-            AuditLog.timestamp.desc(),
-            AuditLog.id.desc()
-        )
-        .all()
-    )
+    return AuditLog.query.order_by(AuditLog.timestamp.desc(), AuditLog.id.desc()).all()

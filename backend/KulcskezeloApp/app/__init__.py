@@ -15,8 +15,6 @@ def create_app(config_class=Config):
     db.init_app(app)
     Migrate(app, db)
 
-    setup_audit_logging()
-
     # Blueprints
     from app.blueprints import bp as bp_default
     from app.blueprints.auth import bp as bp_auth
