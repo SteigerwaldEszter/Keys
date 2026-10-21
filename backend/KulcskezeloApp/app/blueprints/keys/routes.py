@@ -13,7 +13,7 @@ from .service import (
     create_or_update_key,
     delete_key_action,
     get_all_keys,
-    issue_key_action,
+    handover_key_action,
     return_key_action,
 )
 
@@ -46,18 +46,17 @@ def update_key(key_id, json_data):
 
 
 @bp.post("/<int:key_id>/handover")
-@bp.input(KeyHandoverSchema)
 @bp.auth_required(auth)
 @role_required("Receptionist")
-def issue_key(key_id, json_data):
-    user_id = auth.current_user["user_id"]
-    return issue_key_action(
+@bp.input(KeyHandoverSchema)
+def handover_key(key_id, json_data):
+    return handover_key_action(
         key_id=key_id,
         reservation_id=json_data["reservation_id"],
         receiver_id=json_data["receiver_id"],
         auth_format=json_data["format"],
         signature_payload=json_data["payload"],
-        handler_user_id=user_id,
+        handler_user_id=auth.current_user["user_id"],
     ), 200
 
 

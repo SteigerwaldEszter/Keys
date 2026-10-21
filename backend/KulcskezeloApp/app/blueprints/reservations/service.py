@@ -1,8 +1,8 @@
 from datetime import timedelta
 
+from app.blueprints.reports.service import create_audit_log
 from app.extensions import db
 from app.models.reservation import Reservation
-from app.services.audit_log.service import create_audit_log
 
 
 class ReservationService:

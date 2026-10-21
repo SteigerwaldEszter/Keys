@@ -24,7 +24,9 @@ def index():
 @bp.input(RegisterRequestSchema)
 @bp.output(UserResponseSchema)
 def register(json_data):
-    success, res = AuthService.register(json_data)
+    actor_user_id = token_auth.current_user["user_id"]
+
+    success, res = AuthService.register(json_data, actor_user_id=actor_user_id)
     if success:
         return res
     raise HTTPError(400, res)
@@ -43,6 +45,9 @@ def login(json_data):
 @bp.post("/logout")
 @bp.auth_required(token_auth)
 def logout():
+    user_id = token_auth.current_user["user_id"]
+
+    AuthService.record_logout(user_id)
     return {"message": "Sikeres kijelentkezés"}, 200
 
 
