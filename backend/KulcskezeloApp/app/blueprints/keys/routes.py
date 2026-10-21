@@ -38,7 +38,10 @@ def list_keys():
 @bp.auth_required(auth)
 @role_required("Admin")
 def create_key(json_data):
-    return create_or_update_key(json_data)
+    return create_or_update_key(
+        json_data,
+        actor_user_id=auth.current_user["user_id"],
+    )
 
 
 @bp.put("/<int:key_id>")
@@ -47,7 +50,9 @@ def create_key(json_data):
 @bp.auth_required(auth)
 @role_required("Admin")
 def update_key(key_id, json_data):
-    return create_or_update_key(json_data, key_id=key_id)
+    return create_or_update_key(
+        json_data, key_id=key_id, actor_user_id=auth.current_user["user_id"]
+    )
 
 
 @bp.post("/<int:key_id>/handover")
@@ -77,7 +82,7 @@ def return_key(key_id, json_data):
             receiver_id=json_data["receiver_id"],
             auth_format=json_data["format"],
             signature_payload=json_data["payload"],
-            handler_user_id=1,
+            handler_user_id=auth.current_user["user_id"],
         ),
         200,
     )
@@ -87,7 +92,10 @@ def return_key(key_id, json_data):
 @bp.auth_required(auth)
 @role_required("Admin")
 def delete_key(key_id):
-    return delete_key_action(key_id)
+    return delete_key_action(
+        key_id,
+        actor_user_id=auth.current_user["user_id"],
+    )
 
 
 @bp.post("/api/signature/<string:token>")
