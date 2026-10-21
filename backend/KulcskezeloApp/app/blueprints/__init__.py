@@ -31,22 +31,30 @@ def verify_token(token):
 
 
 def role_required(roles):
+    allowed_roles = {roles} if isinstance(roles, str) else set(roles)
+
     def wrapper(fn):
         @wraps(fn)
         def decorated_function(*args, **kwargs):
-            user_roles = [
+            current_user = token_auth.current_user
+
+            if not isinstance(current_user, dict):
+                raise HTTPError(
+                    message="Authentication required.",
+                    status_code=401,
+                )
+
+            user_roles = {
                 item.get("role") if isinstance(item, dict) else item
-                for item in token_auth.current_user.get("roles", [])
-            ]
+                for item in current_user.get("roles", [])
+            }
 
-            # Teszteléshez
-            print(f"debug: elvárt: {roles}, user roles: {user_roles}")
-
-            for role in roles:
-                if role in user_roles:
-                    return fn(*args, **kwargs)
-
-            raise HTTPError(message="access denied.", status_code=403)
+            if not allowed_roles.intersection(user_roles):
+                raise HTTPError(
+                    message="Access denied.",
+                    status_code=403,
+                )
+            return fn(*args, **kwargs)
 
         return decorated_function
 
