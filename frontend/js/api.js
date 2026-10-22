@@ -12,6 +12,15 @@ function clearToken() {
   localStorage.removeItem(TOKEN_KEY);
 }
 
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 async function api(path, options = {}) {
   const headers = { ...(options.headers || {}) };
   const token = getToken();
