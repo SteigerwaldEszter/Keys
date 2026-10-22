@@ -39,3 +39,11 @@ function redirectIfLoggedIn() {
     window.location.href = "app.html";
   }
 }
+
+function hasRole(user, role) {
+  return (user.roles || []).includes(role);
+}
+
+function hasAnyRole(user, roles) {
+  return roles.some((role) => hasRole(user, role));
+}

@@ -18,9 +18,183 @@
       </div>
     </header>
     <main class="shell">
+      <nav class="tabs">
+        <button class="tab active" type="button" data-tab="classrooms">Teremek</button>
+        <button class="tab" type="button" data-tab="keys">Kulcsok</button>
+        <button class="tab" type="button" data-tab="reservations">Foglalások</button>
+      </nav>
+
+      <section id="panel-classrooms" class="panel active">
+        <div class="panel-header">
+          <h2>Teremek</h2>
+        </div>
+        <div id="classroom-alert" class="alert" role="alert"></div>
+        <div class="grid-2">
+          <div class="box table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Azonosító</th>
+                  <th>Kapacitás</th>
+                  <th>Típus</th>
+                  <th>Aktív</th>
+                  <th>Eszközök</th>
+                  <th>Műveletek</th>
+                </tr>
+              </thead>
+              <tbody id="classroom-rows"></tbody>
+            </table>
+          </div>
+          <div id="classroom-form-box" class="box hidden">
+            <h3>Terem felvitele / módosítása</h3>
+            <form id="classroom-form">
+              <input type="hidden" id="classroom-mode" value="create" />
+              <label for="classroom-id">Terem azonosító</label>
+              <input id="classroom-id" required />
+              <label for="classroom-capacity">Kapacitás</label>
+              <input id="classroom-capacity" type="number" min="1" required />
+              <label for="classroom-type-id">Típus azonosító</label>
+              <input id="classroom-type-id" type="number" min="1" required />
+              <div class="checkbox-row">
+                <input id="classroom-active" type="checkbox" checked />
+                <label for="classroom-active">Aktív</label>
+              </div>
+              <button id="classroom-submit" type="submit">Terem létrehozása</button>
+              <button id="classroom-reset" class="btn-secondary" type="button">Új űrlap</button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <section id="panel-keys" class="panel">
+        <div class="panel-header">
+          <h2>Kulcsok</h2>
+        </div>
+        <div id="key-alert" class="alert" role="alert"></div>
+        <div class="grid-2">
+          <div class="box table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Azonosító</th>
+                  <th>Terem</th>
+                  <th>Név</th>
+                  <th>Állapot</th>
+                  <th>Mesterkulcs</th>
+                  <th>Műveletek</th>
+                </tr>
+              </thead>
+              <tbody id="key-rows"></tbody>
+            </table>
+          </div>
+          <div>
+            <div id="key-form-box" class="box hidden">
+              <h3>Kulcs felvitele / módosítása</h3>
+              <form id="key-form">
+                <input type="hidden" id="key-id" />
+                <label for="key-room-id">Terem azonosító</label>
+                <input id="key-room-id" required />
+                <label for="key-name">Kulcs neve</label>
+                <input id="key-name" required />
+                <label for="key-status">Állapot</label>
+                <select id="key-status">
+                  <option value="available">available</option>
+                  <option value="issued">issued</option>
+                </select>
+                <div class="checkbox-row">
+                  <input id="key-master" type="checkbox" />
+                  <label for="key-master">Mesterkulcs</label>
+                </div>
+                <button id="key-submit" type="submit">Kulcs létrehozása</button>
+                <button id="key-reset" class="btn-secondary" type="button">Új űrlap</button>
+              </form>
+            </div>
+            <div id="key-handover-box" class="box hidden" style="margin-top: 16px">
+              <h3>Kiadás / visszavétel</h3>
+              <form id="key-handover-form">
+                <label for="handover-key-id">Kulcs azonosító</label>
+                <input id="handover-key-id" type="number" min="1" required />
+                <label for="handover-action">Művelet</label>
+                <select id="handover-action">
+                  <option value="handover">Kiadás</option>
+                  <option value="return">Visszavétel</option>
+                </select>
+                <label for="handover-reservation-id">Foglalás azonosító</label>
+                <input id="handover-reservation-id" type="number" min="1" required />
+                <label for="handover-receiver-id">Átvevő felhasználó azonosító</label>
+                <input id="handover-receiver-id" type="number" min="1" required />
+                <label for="handover-format">Hitelesítés formátuma</label>
+                <input id="handover-format" value="SIGNATURE" />
+                <label for="handover-payload">Aláírás / PIN adat</label>
+                <input id="handover-payload" value="OK" />
+                <button type="submit">Művelet indítása</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="panel-reservations" class="panel">
+        <div class="panel-header">
+          <h2>Foglalások</h2>
+        </div>
+        <div id="reservation-alert" class="alert" role="alert"></div>
+        <div class="grid-2">
+          <div class="box table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Azonosító</th>
+                  <th>Terem</th>
+                  <th>Felhasználó</th>
+                  <th>Kezdés</th>
+                  <th>Vége</th>
+                  <th>Állapot</th>
+                  <th>Műveletek</th>
+                </tr>
+              </thead>
+              <tbody id="reservation-rows"></tbody>
+            </table>
+          </div>
+          <div>
+            <div id="reservation-form-box" class="box hidden">
+              <h3>Új foglalás</h3>
+              <form id="reservation-form">
+                <label for="reservation-room-id">Terem azonosító</label>
+                <input id="reservation-room-id" required />
+                <label for="reservation-start">Kezdés</label>
+                <input id="reservation-start" type="datetime-local" required />
+                <label for="reservation-slots">Blokkok száma (1–6)</label>
+                <input id="reservation-slots" type="number" min="1" max="6" value="1" />
+                <label for="reservation-weeks">Ismétlődés hetekben (1–15)</label>
+                <input id="reservation-weeks" type="number" min="1" max="15" value="1" />
+                <button type="submit">Foglalás létrehozása</button>
+              </form>
+            </div>
+            <div id="reservation-status-box" class="box hidden" style="margin-top: 16px">
+              <h3>Állapot módosítása</h3>
+              <form id="reservation-status-form">
+                <label for="reservation-status-id">Foglalás azonosító</label>
+                <input id="reservation-status-id" type="number" min="1" required />
+                <label for="reservation-status">Új állapot</label>
+                <select id="reservation-status">
+                  <option value="active">active</option>
+                  <option value="pending">pending</option>
+                  <option value="cancelled">cancelled</option>
+                  <option value="no-show">no-show</option>
+                </select>
+                <button type="submit">Állapot mentése</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
+    <script src="js/classrooms.js"></script>
+    <script src="js/keys.js"></script>
+    <script src="js/reservations.js"></script>
     <script src="js/app.js"></script>
   </body>
 </html>
