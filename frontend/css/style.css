@@ -299,6 +299,17 @@ textarea {
   font-size: 0.8rem;
 }
 
+.muted {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+select.inline-select {
+  width: auto;
+  margin: 0;
+  padding: 4px 8px;
+}
+
 .alert.ok {
   background: #e8efe8;
   color: var(--ok);
