@@ -310,6 +310,34 @@ select.inline-select {
   padding: 4px 8px;
 }
 
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.stat-label {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.section {
+  margin-bottom: 20px;
+}
+
+.mono {
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 0.8rem;
+  word-break: break-word;
+}
+
 .alert.ok {
   background: #e8efe8;
   color: var(--ok);

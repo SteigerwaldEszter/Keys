@@ -29,6 +29,7 @@ getMe()
     initTools(user);
     initIssues(user);
     initUsers(user);
+    initReports(user);
   })
   .catch(() => {
     clearToken();

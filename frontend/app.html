@@ -25,6 +25,7 @@
         <button class="tab" type="button" data-tab="tools">Eszközök</button>
         <button class="tab" type="button" data-tab="issues">Hibajegyek</button>
         <button class="tab" type="button" data-tab="users">Felhasználók</button>
+        <button class="tab" type="button" data-tab="reports">Jelentések</button>
       </nav>
 
       <section id="panel-classrooms" class="panel active">
@@ -312,6 +313,59 @@
           </div>
         </div>
       </section>
+
+      <section id="panel-reports" class="panel">
+        <div class="panel-header">
+          <h2>Jelentések</h2>
+          <button id="report-refresh" class="btn-secondary" type="button">Frissítés</button>
+        </div>
+        <div id="report-alert" class="alert" role="alert"></div>
+        <div class="stats">
+          <div class="box stat">
+            <div class="stat-label">Összes kulcs</div>
+            <div id="stat-total" class="stat-value">–</div>
+          </div>
+          <div class="box stat">
+            <div class="stat-label">Kiadva</div>
+            <div id="stat-issued" class="stat-value">–</div>
+          </div>
+          <div class="box stat">
+            <div class="stat-label">Elérhető</div>
+            <div id="stat-available" class="stat-value">–</div>
+          </div>
+        </div>
+        <div class="box table-wrap section">
+          <h3>Vissza nem hozott kulcsok</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Kulcs</th>
+                <th>Terem</th>
+                <th>Foglalás</th>
+                <th>Foglalás vége</th>
+                <th>Kiadó</th>
+              </tr>
+            </thead>
+            <tbody id="missing-key-rows"></tbody>
+          </table>
+        </div>
+        <div class="box table-wrap section">
+          <h3>Audit napló</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Időpont</th>
+                <th>Felhasználó</th>
+                <th>Művelet</th>
+                <th>Entitás</th>
+                <th>Régi érték</th>
+                <th>Új érték</th>
+              </tr>
+            </thead>
+            <tbody id="audit-rows"></tbody>
+          </table>
+        </div>
+      </section>
     </main>
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
@@ -321,6 +375,7 @@
     <script src="js/tools.js"></script>
     <script src="js/issues.js"></script>
     <script src="js/users.js"></script>
+    <script src="js/reports.js"></script>
     <script src="js/app.js"></script>
   </body>
 </html>
