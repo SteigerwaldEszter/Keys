@@ -24,6 +24,7 @@
         <button class="tab" type="button" data-tab="reservations">Foglalások</button>
         <button class="tab" type="button" data-tab="tools">Eszközök</button>
         <button class="tab" type="button" data-tab="issues">Hibajegyek</button>
+        <button class="tab" type="button" data-tab="users">Felhasználók</button>
       </nav>
 
       <section id="panel-classrooms" class="panel active">
@@ -256,6 +257,61 @@
           </div>
         </div>
       </section>
+
+      <section id="panel-users" class="panel">
+        <div class="panel-header">
+          <h2>Felhasználók</h2>
+        </div>
+        <div id="user-alert" class="alert" role="alert"></div>
+        <div class="grid-2">
+          <div class="box table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Azonosító</th>
+                  <th>Név</th>
+                  <th>Szerepkörök</th>
+                  <th>Műveletek</th>
+                </tr>
+              </thead>
+              <tbody id="user-rows"></tbody>
+            </table>
+          </div>
+          <div>
+            <div class="box">
+              <h3>Új felhasználó</h3>
+              <form id="user-form">
+                <label for="new-user-name">Név</label>
+                <input id="new-user-name" required />
+                <label for="new-user-email">E-mail</label>
+                <input id="new-user-email" type="email" autocomplete="off" required />
+                <label for="new-user-password">Jelszó</label>
+                <input id="new-user-password" type="password" autocomplete="new-password" required />
+                <label for="new-user-role">Szerepkör</label>
+                <select id="new-user-role">
+                  <option value="Instructor">Instructor</option>
+                  <option value="Receptionist">Receptionist</option>
+                  <option value="Director">Director</option>
+                  <option value="Admin">Admin</option>
+                </select>
+                <div id="new-user-pin-row" class="hidden">
+                  <label for="new-user-pin">PIN (portásnak kötelező)</label>
+                  <input id="new-user-pin" inputmode="numeric" autocomplete="off" />
+                </div>
+                <button type="submit">Felhasználó létrehozása</button>
+              </form>
+            </div>
+            <div id="user-role-box" class="box hidden" style="margin-top: 16px">
+              <h3>Szerepkörök: <span id="user-role-name"></span></h3>
+              <form id="user-role-form">
+                <div id="user-role-checks"></div>
+                <button type="submit">Mentés</button>
+                <button id="user-role-cancel" class="btn-secondary" type="button">Mégse</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
@@ -264,6 +320,7 @@
     <script src="js/reservations.js"></script>
     <script src="js/tools.js"></script>
     <script src="js/issues.js"></script>
+    <script src="js/users.js"></script>
     <script src="js/app.js"></script>
   </body>
 </html>

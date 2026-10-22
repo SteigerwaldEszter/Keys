@@ -28,6 +28,7 @@ getMe()
     initReservations(user);
     initTools(user);
     initIssues(user);
+    initUsers(user);
   })
   .catch(() => {
     clearToken();
