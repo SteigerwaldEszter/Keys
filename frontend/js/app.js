@@ -23,6 +23,10 @@ getMe()
   .then((user) => {
     nameEl.textContent = user.name || `Felhasználó #${user.id}`;
     rolesEl.textContent = (user.roles || []).join(", ") || "nincs szerepkör";
+    document.querySelectorAll(".tab[data-roles]").forEach((tab) => {
+      const allowed = hasAnyRole(user, tab.dataset.roles.split(","));
+      tab.classList.toggle("hidden", !allowed);
+    });
     initClassrooms(user);
     initKeys(user);
     initReservations(user);
