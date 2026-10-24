@@ -86,6 +86,12 @@ docker compose exec backend python \_\_init\_\_db.py
 
 
 
+frontend:
+
+http://localhost:8080/
+
+
+
 swaggerek:
 
 
