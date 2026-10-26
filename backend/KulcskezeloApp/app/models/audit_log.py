@@ -18,8 +18,8 @@ class AuditLog(db.Model):
     action: Mapped[str] = mapped_column(String(100), nullable=False)
     entity_name: Mapped[str | None] = mapped_column(String(100), nullable=False)
     entity_value: Mapped[str | None] = mapped_column(String(255))
-    new_value: Mapped[str | None] = mapped_column(Text)
-    old_value: Mapped[str | None] = mapped_column(Text)
+    new_value: Mapped[str | None] = mapped_column(Text, nullable=True)
+    old_value: Mapped[str | None] = mapped_column(Text, nullable=True)
     timestamp: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False, index=True
     )
