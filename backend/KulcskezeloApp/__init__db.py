@@ -89,7 +89,7 @@ def seed_database():
                     "roles": "Instructor",
                 },
                 {
-                    "email": "fnoi.feri@teszt.hu",
+                    "email": "foni.feri@teszt.hu",
                     "name": "Főnök Ferenc",
                     "password": "Password123",
                     "pin": "",
@@ -190,7 +190,7 @@ def seed_database():
                 )
                 db.session.commit()
             # Reservation
-            instructor = User.query.filter_by(email="oktato@teszt.hu").first()
+            instructor = User.query.filter_by(email="eloado.elod@teszt.hu").first()
             if not Reservation.query.first() and instructor and c2:
                 res = Reservation(
                     user_id=instructor.id,
