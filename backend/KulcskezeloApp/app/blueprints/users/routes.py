@@ -22,10 +22,11 @@ def index():
 @role_required(["Admin"])
 @bp.output(UserListResponseSchema)
 def get_users():
-    """A rendszerben nyilvántartott felhasználók listázása."""
     success, res = UserService.get_all_users()
+
     if success:
         return res
+
     raise HTTPError(400, res)
 
 
@@ -34,10 +35,11 @@ def get_users():
 @role_required(["Admin"])
 @bp.output(UserSchema)
 def get_user_by_id(id):
-    """Felhasználó lekérdezése azonosító alapján."""
     success, res = UserService.get_user_by_id(id)
+
     if success:
         return res
+
     raise HTTPError(404, res)
 
 
@@ -46,8 +48,13 @@ def get_user_by_id(id):
 @role_required(["Admin"])
 @bp.input(RoleUpdateSchema)
 def update_user_roles(id, json_data):
-    """Felhasználó szerepkörének frissítése."""
-    success, res = UserService.update_user_roles(id, json_data)
+    success, res = UserService.update_user_roles(
+        user_id=id,
+        json_data=json_data,
+        actor_user_id=auth.current_user["user_id"],
+    )
+
     if success:
         return res
+
     raise HTTPError(400, res)
