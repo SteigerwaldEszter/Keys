@@ -9,6 +9,7 @@ from app.blueprints.auth.schemas import (
 )
 from app.blueprints.auth.service import AuthService
 from app.extensions import auth as token_auth
+from app.models.user import User
 
 bp = APIBlueprint("auth", __name__, tag="auth")
 
@@ -26,9 +27,14 @@ def index():
 def register(json_data):
     actor_user_id = token_auth.current_user["user_id"]
 
-    success, res = AuthService.register(json_data, actor_user_id=actor_user_id)
+    success, res = AuthService.register(
+        json_data,
+        actor_user_id=actor_user_id,
+    )
+
     if success:
         return res
+
     raise HTTPError(400, res)
 
 
@@ -37,8 +43,10 @@ def register(json_data):
 @bp.output(TokenResponseSchema)
 def login(json_data):
     success, res = AuthService.login(json_data)
+
     if success:
         return res
+
     raise HTTPError(401, res)
 
 
@@ -48,23 +56,32 @@ def logout():
     user_id = token_auth.current_user["user_id"]
 
     AuthService.record_logout(user_id)
-    return {"message": "Sikeres kijelentkezés"}, 200
+
+    return {"message": "Kijelentkezési kérés rögzítve"}, 200
 
 
 @bp.get("/me")
 @bp.auth_required(token_auth)
 def get_me():
-    from app.models.user import User
-
     user = User.query.get(token_auth.current_user["user_id"])
-    return {"id": user.id, "name": user.name, "roles": [r.name for r in user.roles]}
+
+    return {
+        "id": user.id,
+        "name": user.name,
+        "roles": [r.name for r in user.roles],
+    }
 
 
 @bp.delete("/delete/<int:id>")
 @bp.auth_required(token_auth)
 @role_required(["Admin"])
 def delete_user(id):
-    success, res = AuthService.delete_user(id)
+    success, res = AuthService.delete_user(
+        user_id=id,
+        actor_user_id=token_auth.current_user["user_id"],
+    )
+
     if success:
         return ""
+
     raise HTTPError(400, res)
