@@ -67,6 +67,7 @@ def handover_key(key_id, json_data):
         auth_format=json_data["format"],
         signature_payload=json_data["payload"],
         handler_user_id=auth.current_user["user_id"],
+        pin=json_data["pin"],
     ), 200
 
 

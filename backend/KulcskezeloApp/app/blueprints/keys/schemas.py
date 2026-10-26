@@ -23,6 +23,7 @@ class KeyHandoverSchema(Schema):
     receiver_id = Integer(required=True)
     format = String(required=True)
     payload = String(required=True)
+    pin = String(required=True)
 
 
 class KeyReturnSchema(Schema):

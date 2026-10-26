@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Kulcs átvételének aláírása</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <style>
+        #sign-alert {
+            position: fixed;
+            top: 8px;
+            left: 8px;
+            right: 8px;
+            z-index: 20;
+            margin: 0;
+        }
+
+        #sign-info {
+            font-weight: 600;
+        }
+
+        #sign-stage {
+            position: fixed;
+            inset: 0;
+            z-index: 10;
+            background: var(--bg);
+            padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
+        }
+
+        .sign-pad {
+            display: block;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            border: 2px dashed var(--line);
+            border-radius: 12px;
+            touch-action: none;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .sign-hint {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #9aa5ad;
+            font-size: 1.3rem;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .sign-bar {
+            position: absolute;
+            top: calc(max(8px, env(safe-area-inset-top)) + 10px);
+            right: calc(max(8px, env(safe-area-inset-right)) + 10px);
+            display: flex;
+            gap: 8px;
+            z-index: 2;
+        }
+
+            .sign-bar button {
+                padding: 8px 14px;
+            }
+
+        .sign-stage-info {
+            position: absolute;
+            left: calc(max(8px, env(safe-area-inset-left)) + 12px);
+            bottom: calc(max(8px, env(safe-area-inset-bottom)) + 8px);
+            font-size: 0.85rem;
+            color: var(--muted);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .sign-rotate {
+            display: none;
+            position: absolute;
+            inset: 0;
+            z-index: 5;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            text-align: center;
+            font-size: 1.2rem;
+            background: var(--card);
+        }
+
+        @media (orientation: portrait) {
+            .sign-rotate {
+                display: flex;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="sign-alert" class="alert" role="alert"></div>
+
+    <main id="sign-intro" class="page">
+        <div class="card">
+            <h1>Kulcs átvétele</h1>
+            <p class="subtitle">Az aláírásoddal igazolod, hogy átvetted a kulcsot.</p>
+            <p id="sign-info" class="hidden"></p>
+            <p class="subtitle">Az aláíráshoz fordítsd fektetett (fekvő) helyzetbe a telefont.</p>
+            <button id="sign-start" type="button">Aláírás megkezdése</button>
+        </div>
+    </main>
+
+    <div id="sign-stage" class="hidden">
+        <canvas id="sign-pad" class="sign-pad"></canvas>
+        <div id="sign-hint" class="sign-hint">Írd alá az ujjaddal</div>
+        <div class="sign-bar">
+            <button id="sign-clear" class="btn-secondary" type="button">Törlés</button>
+            <button id="sign-send" type="button" disabled>Aláírom</button>
+        </div>
+        <div id="sign-stage-info" class="sign-stage-info"></div>
+        <div class="sign-rotate">Fordítsd el a telefont fektetve az aláíráshoz.</div>
+    </div>
+
+    <main id="sign-done" class="page hidden">
+        <div class="card">
+            <h1>Sikeres aláírás!</h1>
+            <p class="subtitle">Az aláírásodat elküldtük és rögzítettük a rendszerben.</p>
+            <p class="subtitle">Most már bezárhatod ezt az ablakot.</p>
+        </div>
+    </main>
+
+    <script src="js/sign.js"></script>
+</body>
+</html>
