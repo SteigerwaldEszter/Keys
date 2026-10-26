@@ -28,18 +28,20 @@ def get_classrooms(query_data):
 
     if success:
         return res
+
     raise HTTPError(400, res)
 
 
-@bp.get("/list")
+@bp.get("/all")
 @bp.auth_required(auth)
-@role_required("Admin")
+@role_required(["Admin"])
 @bp.output(ClassroomListResponseSchema)
-def get_all_classrooms(query_data):
-    success, res = ClassroomService.get_filtered_classrooms(query_data)
+def get_all_classrooms():
+    success, res = ClassroomService.get_all_classrooms()
 
     if success:
         return res
+
     raise HTTPError(400, res)
 
 
@@ -48,8 +50,10 @@ def get_all_classrooms(query_data):
 @bp.output(ClassroomDetailResponseSchema)
 def get_classroom_by_id(id):
     success, res = ClassroomService.get_classroom_by_id(id)
+
     if success:
         return res
+
     raise HTTPError(404, res)
 
 
@@ -59,10 +63,14 @@ def get_classroom_by_id(id):
 @bp.input(ClassroomCreateRequestSchema)
 @bp.output(ClassroomDetailResponseSchema, status_code=201)
 def create_classroom(json_data):
-    """Új terem és teremtörzs adatok felvitele."""
-    success, res = ClassroomService.create_classroom(json_data)
+    success, res = ClassroomService.create_classroom(
+        json_data,
+        actor_user_id=auth.current_user["user_id"],
+    )
+
     if success:
         return res
+
     raise HTTPError(400, res)
 
 
@@ -72,10 +80,15 @@ def create_classroom(json_data):
 @bp.input(ClassroomUpdateRequestSchema)
 @bp.output(ClassroomDetailResponseSchema)
 def update_classroom(id, json_data):
-    """Terem adatainak frissítése."""
-    success, res = ClassroomService.update_classroom(id, json_data)
+    success, res = ClassroomService.update_classroom(
+        id,
+        json_data,
+        actor_user_id=auth.current_user["user_id"],
+    )
+
     if success:
         return res
+
     raise HTTPError(400, res)
 
 
@@ -84,8 +97,12 @@ def update_classroom(id, json_data):
 @role_required(["Admin"])
 @bp.output({}, status_code=204)
 def delete_classroom(id):
-    """Terem törlése (vagy inaktívvá tétele)."""
-    success, res = ClassroomService.delete_classroom(id)
+    success, res = ClassroomService.delete_classroom(
+        id,
+        actor_user_id=auth.current_user["user_id"],
+    )
+
     if success:
         return ""
+
     raise HTTPError(400, res)
