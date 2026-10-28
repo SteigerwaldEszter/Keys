@@ -4,6 +4,7 @@ from functools import wraps
 from apiflask import APIBlueprint, HTTPError
 from authlib.jose import jwt
 from flask import current_app, request
+from sqlalchemy import text
 
 from app.extensions import auth as token_auth
 from app.extensions import db
@@ -15,6 +16,18 @@ bp = APIBlueprint("main", __name__, tag="main")
 @bp.route("/")
 def index():
     return "this is the main blueprint"
+
+
+@bp.get("/health")
+def health():
+    try:
+        db.session.execute(text("SELECT 1"))
+    except Exception:
+        db.session.rollback()
+        current_app.logger.exception("Health check: az adatbázis nem érhető el")
+        return {"status": "error", "database": "down"}, 503
+
+    return {"status": "ok", "database": "up"}
 
 
 @token_auth.verify_token
