@@ -48,7 +48,10 @@ async function api(path, options = {}) {
     const message =
       (data && (data.message || data.detail || data.error)) ||
       `Hiba (${response.status})`;
-    throw new Error(typeof message === "string" ? message : JSON.stringify(message));
+    const error = new Error(typeof message === "string" ? message : JSON.stringify(message));
+        error.status = response.status;
+    error.data = data;
+    throw error;
   }
 
   return data;

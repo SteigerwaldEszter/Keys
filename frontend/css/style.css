@@ -342,3 +342,53 @@ select.inline-select {
   background: #e8efe8;
   color: var(--ok);
 }
+
+.alert.warn {
+  background: #fff4e0;
+  color: #8a5300;
+}
+
+.badge.badge-warn {
+  background: #fde8e8;
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.badge.badge-muted {
+  background: #eceff1;
+  color: var(--muted);
+}
+
+.conflict-box {
+  margin-bottom: 20px;
+  border-color: #e0a8a8;
+  background: #fff6f6;
+}
+
+.conflict-box h3 {
+  color: var(--danger);
+}
+
+tr.past td {
+  color: var(--muted);
+}
+
+tr.conflict-row > td {
+  background: #fff6f6;
+}
+
+.conflict-list {
+  margin-top: 8px;
+}
+
+.reservation-edit-row > td {
+  background: #f3f6fa;
+  padding: 12px;
+}
+
+.reservation-edit-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  align-items: end;
+  gap: 10px;
+}

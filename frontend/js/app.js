@@ -30,6 +30,7 @@ getMe()
     initClassrooms(user);
     initKeys(user);
     initReservations(user);
+    initMaintenance(user);
     initTools(user);
     initIssues(user);
     initUsers(user);

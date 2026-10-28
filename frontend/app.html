@@ -22,6 +22,7 @@
         <button class="tab active" type="button" data-tab="classrooms">Teremek</button>
         <button class="tab" type="button" data-tab="keys">Kulcsok</button>
         <button class="tab" type="button" data-tab="reservations">Foglalások</button>
+        <button class="tab hidden" type="button" data-tab="maintenance" data-roles="Admin">Karbantartás</button>
         <button class="tab" type="button" data-tab="tools">Eszközök</button>
         <button class="tab" type="button" data-tab="issues">Hibajegyek</button>
         <button class="tab hidden" type="button" data-tab="users" data-roles="Admin">Felhasználók</button>
@@ -227,6 +228,70 @@
         </div>
       </section>
 
+      <section id="panel-maintenance" class="panel">
+        <div class="panel-header">
+          <h2>Karbantartási idősávok</h2>
+        </div>
+        <p class="muted">A kijelölt idősávban a terem nem foglalható.</p>
+        <div id="maintenance-alert" class="alert" role="alert"></div>
+
+        <div id="maintenance-conflict-box" class="box conflict-box hidden" role="alert">
+          <h3 id="maintenance-conflict-title"></h3>
+          <p>
+            Az alábbi foglalások ütköznek a kijelölni kívánt karbantartással. Az idősáv
+            rögzítése nem törli őket, ezeket neked kell kezelned (törlés vagy áthelyezés).
+          </p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Foglalás</th>
+                  <th>Foglaló</th>
+                  <th>Időpont</th>
+                  <th>Állapot</th>
+                </tr>
+              </thead>
+              <tbody id="maintenance-conflict-rows"></tbody>
+            </table>
+          </div>
+          <div class="actions" style="margin-top: 12px">
+            <button id="maintenance-confirm" class="btn-danger" type="button">
+              Tudomásul veszem, kijelölöm
+            </button>
+            <button id="maintenance-cancel" class="btn-secondary" type="button">Mégse</button>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="box table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Terem</th>
+                  <th>Kezdete</th>
+                  <th>Vége</th>
+                  <th>Ütköző foglalás</th>
+                  <th>Műveletek</th>
+                </tr>
+              </thead>
+              <tbody id="maintenance-rows"></tbody>
+            </table>
+          </div>
+          <div class="box">
+            <h3>Új karbantartási idősáv</h3>
+            <form id="maintenance-form">
+              <label for="maintenance-room-id">Terem</label>
+              <select id="maintenance-room-id" required></select>
+              <label for="maintenance-start">Kezdete</label>
+              <input id="maintenance-start" type="datetime-local" required />
+              <label for="maintenance-end">Vége</label>
+              <input id="maintenance-end" type="datetime-local" required />
+              <button id="maintenance-submit" type="submit">Idősáv kijelölése</button>
+            </form>
+          </div>
+        </div>
+      </section>
+
       <section id="panel-tools" class="panel">
         <div class="panel-header">
           <h2>Eszközök</h2>
@@ -406,6 +471,7 @@
     <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
     <script src="js/keys.js"></script>
     <script src="js/reservations.js"></script>
+    <script src="js/maintenance.js"></script>
     <script src="js/tools.js"></script>
     <script src="js/issues.js"></script>
     <script src="js/users.js"></script>

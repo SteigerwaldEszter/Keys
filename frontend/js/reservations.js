@@ -126,5 +126,9 @@ function initReservations(user) {
     }
   });
 
+   document.addEventListener("reservations-changed", () => {
+    loadReservations().catch((error) => showAlert(error.message));
+  });
+
   loadReservations().catch((error) => showAlert(error.message));
 }
