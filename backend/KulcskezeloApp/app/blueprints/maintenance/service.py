@@ -146,10 +146,11 @@ class MaintenanceService:
             if conflicts and not confirm_conflicts:
                 abort(
                     409,
-                    message=(
+                   message=(
                         f"A karbantartás {len(conflicts)} meglévő foglalással ütközik. "
                         "Az idősáv csak akkor jelölhető ki, ha ezt tudomásul veszed; "
-                        "az érintett foglalásokat ezután kezelni kell (törlés vagy áthelyezés)."
+                        "az érintett foglalásokat ezután kezelni kell "
+                        "(törlés vagy áthelyezés)."
                     ),
                     detail={
                         "conflicts": [serialize_conflict(item) for item in conflicts]
@@ -215,7 +216,10 @@ class MaintenanceService:
 
     @staticmethod
     def update_conflicting_reservation(reservation_id, data, actor_user_id):
-        """Aktív/függő foglalás áthelyezése; karbantartással vagy más foglalással nem ütközhet."""
+        """
+        Aktív/függő foglalás áthelyezése; 
+        karbantartással vagy más foglalással nem ütközhet.
+        """
         try:
             reservation = (
                 Reservation.query.options(joinedload(Reservation.users))
@@ -249,7 +253,8 @@ class MaintenanceService:
                 abort(
                     409,
                     message=(
-                        f"A foglalás nem helyezhető át: a(z) {room_id} terem karbantartás alatt áll "
+                        f"A foglalás nem helyezhető át: a(z) {room_id} terem "
+                        "karbantartás alatt áll "
                         f"({MaintenanceService.describe_window(maintenance)})."
                     ),
                 )
@@ -270,7 +275,8 @@ class MaintenanceService:
                     409,
                     message=(
                         f"A kiválasztott időpont másik foglalással ütközik "
-                        f"(#{overlap.id}, {MaintenanceService.describe_window(overlap)})."
+                        f"(#{overlap.id}, "
+                        f"{MaintenanceService.describe_window(overlap)})."
                     ),
                 )
 

@@ -1,8 +1,8 @@
 from apiflask import APIFlask
+from config import Config
 from flask_migrate import Migrate
 
 from app.extensions import db
-from config import Config
 
 
 def create_app(config_class=Config):
