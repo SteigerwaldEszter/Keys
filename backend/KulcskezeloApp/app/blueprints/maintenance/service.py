@@ -146,7 +146,7 @@ class MaintenanceService:
             if conflicts and not confirm_conflicts:
                 abort(
                     409,
-                   message=(
+                    message=(
                         f"A karbantartás {len(conflicts)} meglévő foglalással ütközik. "
                         "Az idősáv csak akkor jelölhető ki, ha ezt tudomásul veszed; "
                         "az érintett foglalásokat ezután kezelni kell "
@@ -217,7 +217,7 @@ class MaintenanceService:
     @staticmethod
     def update_conflicting_reservation(reservation_id, data, actor_user_id):
         """
-        Aktív/függő foglalás áthelyezése; 
+        Aktív/függő foglalás áthelyezése;
         karbantartással vagy más foglalással nem ütközhet.
         """
         try:
