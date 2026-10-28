@@ -1,3 +1,4 @@
+import re
 import time
 
 from apiflask import abort
@@ -9,6 +10,7 @@ from app.models.key import Key
 from app.models.key_log import KeyLog
 from app.models.reservation import Reservation
 from app.models.signature import Signature
+from app.models.user import User
 
 
 def get_key_data(key):
@@ -79,6 +81,24 @@ def create_or_update_key(
         raise
 
 
+def verify_handler_pin(key_id, handler_user_id, pin):
+    handler = db.session.get(User, handler_user_id)
+
+    if handler is not None and handler.pin_hash and handler.check_pin(pin):
+        return
+
+    create_audit_log(
+        action="KEY_PIN_FAILED",
+        entity_name="keys",
+        entity_value=key_id,
+        user_id=handler_user_id,
+        new_value={"reason": "invalid_pin"},
+    )
+    db.session.commit()
+
+    abort(403, message="Hibás PIN-kód!")
+
+
 def handover_key_action(
     key_id: int,
     reservation_id: int,
@@ -86,8 +106,11 @@ def handover_key_action(
     auth_format: str,
     signature_payload: str,
     handler_user_id: int,
+    pin: str,
 ):
     try:
+        verify_handler_pin(key_id, handler_user_id, pin)
+
         key = Key.query.filter_by(id=key_id).with_for_update().first_or_404()
 
         if key.status != "available":
@@ -290,7 +313,29 @@ def delete_key_action(
         raise
 
 
+TEMP_SIGNATURE_TTL = 600
+TEMP_SIGNATURE_MAX_ENTRIES = 200
+TEMP_SIGNATURE_MAX_PAYLOAD = 60000
+TEMP_SIGNATURE_TOKEN = re.compile(r"[0-9a-f]{32}")
+TEMP_SIGNATURE_PNG = re.compile(r"data:image/png;base64,[A-Za-z0-9+/]+={0,2}")
+
 temp_signatures_cache = {}
+
+
+def _validate_signature_token(token):
+    if not TEMP_SIGNATURE_TOKEN.fullmatch(token):
+        abort(400, message="Érvénytelen aláírás-azonosító!")
+
+
+def _purge_expired_signatures(now):
+    expired = [
+        k
+        for k, v in temp_signatures_cache.items()
+        if now - v["timestamp"] > TEMP_SIGNATURE_TTL
+    ]
+
+    for k in expired:
+        del temp_signatures_cache[k]
 
 
 def save_temp_signature_action(
@@ -298,30 +343,41 @@ def save_temp_signature_action(
     format_str,
     payload_str,
 ):
+    _validate_signature_token(token)
+
+    if len(payload_str) > TEMP_SIGNATURE_MAX_PAYLOAD:
+        abort(413, message="Az aláírás képe túl nagy!")
+
+    if format_str != "SIGNATURE" or not TEMP_SIGNATURE_PNG.fullmatch(payload_str):
+        abort(400, message="Az aláírás formátuma érvénytelen!")
+
+    now = time.time()
+    _purge_expired_signatures(now)
+
+    if (
+        token not in temp_signatures_cache
+        and len(temp_signatures_cache) >= TEMP_SIGNATURE_MAX_ENTRIES
+    ):
+        abort(429, message="Túl sok aláírás van folyamatban, próbáld újra később!")
+
     temp_signatures_cache[token] = {
         "format": format_str,
         "payload": payload_str,
-        "timestamp": time.time(),
+        "timestamp": now,
     }
-
-    now = time.time()
-
-    keys_to_delete = [
-        k for k, v in temp_signatures_cache.items() if now - v["timestamp"] > 600
-    ]
-
-    for k in keys_to_delete:
-        del temp_signatures_cache[k]
 
 
 def check_temp_signature_action(token):
-    if token in temp_signatures_cache:
-        data = temp_signatures_cache.pop(token)
+    _validate_signature_token(token)
+    _purge_expired_signatures(time.time())
 
-        return {
-            "status": "ready",
-            "format": data["format"],
-            "payload": data["payload"],
-        }
+    data = temp_signatures_cache.pop(token, None)
 
-    return {"status": "waiting"}
+    if data is None:
+        return {"status": "waiting"}
+
+    return {
+        "status": "ready",
+        "format": data["format"],
+        "payload": data["payload"],
+    }

@@ -125,6 +125,106 @@ function initKeys(user) {
     document.getElementById("key-submit").textContent = "Kulcs létrehozása";
   });
 
+  const signatureRequestBtn = document.getElementById("signature-request");
+  const signatureQrWrap = document.getElementById("signature-qr-wrap");
+  const signatureQr = document.getElementById("signature-qr");
+  const signatureStatus = document.getElementById("signature-status");
+  const signaturePreviewWrap = document.getElementById("signature-preview-wrap");
+  const signaturePreview = document.getElementById("signature-preview");
+  let signatureTimer = null;
+  let signatureSession = null;
+
+  function stopSignaturePolling() {
+    if (signatureTimer !== null) {
+      clearInterval(signatureTimer);
+      signatureTimer = null;
+    }
+    signatureSession = null;
+    signatureQrWrap.classList.add("hidden");
+    signatureQr.innerHTML = "";
+  }
+
+  function resetSignatureUi() {
+    stopSignaturePolling();
+    signaturePreview.removeAttribute("src");
+    signaturePreviewWrap.classList.add("hidden");
+  }
+
+  function newSignatureToken() {
+    const bytes = new Uint8Array(16);
+    crypto.getRandomValues(bytes);
+    return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
+  }
+
+  signatureRequestBtn.addEventListener("click", () => {
+    if (!handoverForm.reportValidity()) return;
+
+    resetSignatureUi();
+
+    const token = newSignatureToken();
+    const info =
+      `Kulcs azonosító: ${document.getElementById("handover-key-id").value.trim()}` +
+      ` · Foglalás: ${document.getElementById("handover-reservation-id").value.trim()}`;
+    const url = new URL("sign.html", location.href);
+    url.hash = new URLSearchParams({ t: token, i: info }).toString();
+
+    const isLocal = ["localhost", "127.0.0.1", "[::1]"].includes(location.hostname);
+    signatureStatus.textContent = isLocal
+      ? "Figyelem: a localhost cím a telefonról nem érhető el. Nyisd meg az " +
+        "alkalmazást a gép hálózati IP-címén (pl. http://192.168.1.20:8080)."
+      : "Várakozás az aláírásra…";
+
+    if (typeof qrcode === "function") {
+      const qr = qrcode(0, "M");
+      qr.addData(url.href);
+      qr.make();
+      signatureQr.innerHTML = qr.createImgTag(6, 8);
+    } else {
+      signatureQr.textContent = url.href;
+      showAlert("A QR kód könyvtára nem töltődött be, a hivatkozást kézzel is megnyithatod.");
+    }
+    signatureQrWrap.classList.remove("hidden");
+
+    const session = {};
+    signatureSession = session;
+    const deadline = Date.now() + 10 * 60 * 1000;
+    let busy = false;
+
+    signatureTimer = setInterval(async () => {
+      if (busy) return;
+
+      if (Date.now() > deadline) {
+        stopSignaturePolling();
+        showAlert("Az aláírási kérés lejárt. Kérj újat.");
+        return;
+      }
+
+      busy = true;
+      try {
+        const result = await keysRequest(`/api/signature/${token}`);
+        if (signatureSession !== session) return; 
+
+        if (result && result.status === "ready") {
+          stopSignaturePolling();
+          document.getElementById("handover-format").value = result.format;
+          document.getElementById("handover-payload").value = result.payload;
+          signaturePreview.src = result.payload;
+          signaturePreviewWrap.classList.remove("hidden");
+          showAlert("Az aláírás megérkezett. Indítsd el a műveletet.", true);
+        }
+      } catch (error) {
+        if (signatureSession === session) {
+          stopSignaturePolling();
+          showAlert(error.message);
+        }
+      } finally {
+        busy = false;
+      }
+    }, 2000);
+  });
+
+  document.getElementById("signature-cancel").addEventListener("click", resetSignatureUi);
+
   handoverForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     const keyId = document.getElementById("handover-key-id").value.trim();
@@ -136,6 +236,21 @@ function initKeys(user) {
       payload: document.getElementById("handover-payload").value.trim() || "OK",
     };
 
+    // Kiadásnál az átvevő aláírása és a portás PIN-kódja is kötelező.
+    if (action === "handover") {
+      const pin = document.getElementById("handover-pin").value.trim();
+
+      if (!payload.payload.startsWith("data:image/png;base64,")) {
+        showAlert("A kiadáshoz az átvevő aláírása is szükséges. Kérj aláírást QR kóddal.");
+        return;
+      }
+      if (!pin) {
+        showAlert("A kiadáshoz add meg a PIN-kódodat.");
+        return;
+      }
+      payload.pin = pin;
+    }
+
     try {
       await keysRequest(`/${keyId}/${action}`, {
         method: "POST",
@@ -143,9 +258,12 @@ function initKeys(user) {
       });
       showAlert(action === "handover" ? "A kulcs kiadva." : "A kulcs visszavéve.", true);
       handoverForm.reset();
+      resetSignatureUi();
       await loadKeys();
     } catch (error) {
       showAlert(error.message);
+    } finally {
+      document.getElementById("handover-pin").value = "";
     }
   });
 
