@@ -1,5 +1,9 @@
 from datetime import timedelta
 
+from app.blueprints.maintenance.service import (
+    BLOCKING_RESERVATION_STATUSES,
+    MaintenanceService,
+)
 from app.blueprints.reports.service import create_audit_log
 from app.extensions import db
 from app.models.reservation import Reservation
@@ -46,6 +50,19 @@ class ReservationService:
                 current_start = base_start_time + timedelta(weeks=week)
 
                 current_end = current_start + timedelta(minutes=45 * duration_slots)
+
+                maintenance = MaintenanceService.find_overlapping_window(
+                    room_id, current_start, current_end
+                )
+
+                if maintenance:
+                    return False, (
+                        f"A foglalás sikertelen: a(z) {room_id} terem a(z) "
+                        f"{week + 1}. héten karbantartás alatt áll "
+                        f"({MaintenanceService.describe_window(maintenance)}), "
+                        f"ezért nem foglalható. Kérjük, válasszon másik "
+                        f"időpontot vagy termet."
+                    )
 
                 conflicting_reservation = Reservation.query.filter(
                     Reservation.room_id == room_id,
@@ -128,6 +145,23 @@ class ReservationService:
 
             if old_status == new_status:
                 return True, reservation
+
+            if (
+                new_status in BLOCKING_RESERVATION_STATUSES
+                and old_status not in BLOCKING_RESERVATION_STATUSES
+            ):
+                maintenance = MaintenanceService.find_overlapping_window(
+                    reservation.room_id,
+                    reservation.start_time,
+                    reservation.end_time,
+                )
+
+                if maintenance:
+                    return False, (
+                        f"A foglalás nem állítható '{new_status}' állapotra: "
+                        f"a(z) {reservation.room_id} terem karbantartás alatt "
+                        f"áll ({MaintenanceService.describe_window(maintenance)})."
+                    )
 
             reservation.status = new_status
 
