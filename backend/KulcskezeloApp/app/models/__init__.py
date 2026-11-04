@@ -11,3 +11,9 @@ from app.models.tool import Tool as Tool
 from app.models.type import Type as Type
 from app.models.user import User as User
 from app.models.user_role import UserRole as UserRole
+from app.models.master_key_permissions import (
+    MasterKeyPermissions as MasterKeyPermissions,
+)
+from app.models.master_key_permissions import (
+    MasterKeyPermissions as MasterKeyPermissions,
+)
