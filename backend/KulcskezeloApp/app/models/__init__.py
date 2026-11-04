@@ -4,11 +4,9 @@ from app.models.issue_ticket import IssueTicket as IssueTicket
 from app.models.key import Key as Key
 from app.models.key_log import KeyLog as KeyLog
 from app.models.master_key_permissions import (
-    MasterKeyPermissions as MasterKeyPermissions
+    MasterKeyPermissions as MasterKeyPermissions,
 )
-from app.models.master_key_rooms import (
-    MasterKeyRooms as MasterKeyRooms
-)
+from app.models.master_key_rooms import MasterKeyRooms as MasterKeyRooms
 from app.models.reservation import Reservation as Reservation
 from app.models.role import Role as Role
 from app.models.room_tool import RoomTool as RoomTool
