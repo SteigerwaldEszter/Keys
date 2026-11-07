@@ -1,4 +1,4 @@
-from apiflask import APIBlueprint
+from apiflask import APIBlueprint, HTTPError
 
 from app.blueprints import role_required
 from app.blueprints.maintenance.schemas import (
@@ -30,10 +30,13 @@ def list_maintenance_windows():
 @bp.output(MaintenanceWindowSchema, status_code=201)
 def create_maintenance_window(json_data):
     """Karbantartási idősáv létrehozása."""
-    return MaintenanceService.create_window(
+    success, res = MaintenanceService.create_window(
         json_data,
         actor_user_id=auth.current_user["user_id"],
     )
+    if success:
+        return res
+    raise HTTPError(400, res)
 
 
 @bp.put("/reservation/<int:id>")
@@ -43,12 +46,14 @@ def create_maintenance_window(json_data):
 @bp.output(ConflictingReservationSchema)
 def update_conflicting_reservation(id, json_data):
     """Ütköző foglalás áthelyezése másik terembe vagy időpontra."""
-    return MaintenanceService.update_conflicting_reservation(
+    success, res = MaintenanceService.update_conflicting_reservation(
         id,
         json_data,
         actor_user_id=auth.current_user["user_id"],
     )
-
+    if success:
+        return res
+    raise HTTPError(400, res)
 
 @bp.delete("/delete/<int:id>")
 @bp.auth_required(auth)
@@ -56,9 +61,10 @@ def update_conflicting_reservation(id, json_data):
 @bp.output({}, status_code=204)
 def delete_maintenance_window(id):
     """Karbantartási idősáv törlése."""
-    MaintenanceService.delete_window(
+    success, res = MaintenanceService.delete_window(
         id,
         actor_user_id=auth.current_user["user_id"],
     )
-
-    return ""
+    if success:
+        return ""
+    raise HTTPError(400, res)
