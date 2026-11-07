@@ -21,3 +21,4 @@ class Classroom(db.Model):
     keys = relationship("Key", back_populates="classrooms")
     reservations = relationship("Reservation", back_populates="classrooms")
     issue_tickets = relationship("IssueTicket", back_populates="classrooms")
+    master_key_rooms = relationship("MasterKeyRooms", back_populates="rooms")

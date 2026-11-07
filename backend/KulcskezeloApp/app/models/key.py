@@ -19,3 +19,5 @@ class Key(db.Model):
 
     classrooms = relationship("Classroom", back_populates="keys")
     key_logs = relationship("KeyLog", back_populates="keys")
+    master_key_permissions = relationship("MasterKeyPermissions", back_populates="keys")
+    master_key_rooms = relationship("MasterKeyRooms", back_populates="keys")
