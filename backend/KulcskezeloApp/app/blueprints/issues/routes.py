@@ -1,4 +1,4 @@
-from apiflask import APIBlueprint
+from apiflask import APIBlueprint, HTTPError
 
 from app.blueprints import role_required
 from app.extensions import auth
@@ -30,10 +30,13 @@ def list_issues():
 @bp.auth_required(auth)
 @role_required(["Receptionist", "Admin"])
 def add_issue(json_data):
-    return create_issue(
+    succes, res = create_issue(
         issue_data=json_data,
         user_id=auth.current_user["user_id"],
     )
+    if succes:
+        return res
+    raise HTTPError(400, res)
 
 
 @bp.put("/<int:issue_id>")
@@ -42,8 +45,11 @@ def add_issue(json_data):
 @bp.auth_required(auth)
 @role_required(["Receptionist", "Admin"])
 def update_issue(issue_id, json_data):
-    return update_issue_status(
+    succes, res = update_issue_status(
         issue_id=issue_id,
         new_status=json_data["status"],
         user_id=auth.current_user["user_id"],
     )
+    if succes:
+        return res
+    raise HTTPError(400, res)
