@@ -55,6 +55,7 @@ def update_conflicting_reservation(id, json_data):
         return res
     raise HTTPError(400, res)
 
+
 @bp.delete("/delete/<int:id>")
 @bp.auth_required(auth)
 @role_required("Admin")

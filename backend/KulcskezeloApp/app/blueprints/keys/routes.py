@@ -46,6 +46,7 @@ def create_key(json_data):
         return res
     raise HTTPError(400, res)
 
+
 @bp.put("/<int:key_id>")
 @bp.input(KeyCreateUpdateSchema)
 @bp.output(KeyOutSchema)
@@ -78,6 +79,7 @@ def handover_key(key_id, json_data):
         return res
     raise HTTPError(400, res)
 
+
 @bp.post("/<int:key_id>/return")
 @bp.input(KeyReturnSchema)
 @bp.auth_required(auth)
@@ -108,6 +110,7 @@ def delete_key(key_id):
         return ""
     raise HTTPError(400, res)
 
+
 @bp.post("/api/signature/<string:token>")
 @bp.input(TempSignatureIn)
 @bp.output(MessageOut, status_code=200)
@@ -118,6 +121,7 @@ def save_temp_signature(token, json_data):
     if succes:
         return res
     raise HTTPError(400, res)
+
 
 @bp.get("/api/signature/<string:token>")
 @bp.output(TempSignatureOut, status_code=200)
