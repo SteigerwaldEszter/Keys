@@ -1,4 +1,3 @@
-from sre_constants import SUCCESS
 from apiflask import APIBlueprint, HTTPError
 
 from app.blueprints import role_required
