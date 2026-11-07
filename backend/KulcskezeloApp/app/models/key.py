@@ -11,7 +11,7 @@ class Key(db.Model):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     room_id: Mapped[str] = mapped_column(
-        String(10), ForeignKey("classrooms.id"), nullable=False
+        String(10), ForeignKey("classrooms.id"), nullable=True
     )
     name: Mapped[str] = mapped_column(String(20), nullable=False)
     status: Mapped[str] = mapped_column(String(50), default="available", nullable=False)
@@ -19,3 +19,5 @@ class Key(db.Model):
 
     classrooms = relationship("Classroom", back_populates="keys")
     key_logs = relationship("KeyLog", back_populates="keys")
+    master_key_permissions = relationship("MasterKeyPermissions", back_populates="keys")
+    master_key_rooms = relationship("MasterKeyRooms", back_populates="keys")

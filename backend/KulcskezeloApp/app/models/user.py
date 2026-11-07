@@ -38,6 +38,9 @@ class User(db.Model):
     received_key_logs = relationship(
         "KeyLog", foreign_keys="[KeyLog.receiver_id]", back_populates="receivers"
     )
+    master_key_permissions = relationship(
+        "MasterKeyPermissions", back_populates="users"
+    )
 
     def set_password(self, password: str) -> None:
         self.password_hash = generate_password_hash(password)
