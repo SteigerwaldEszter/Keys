@@ -179,7 +179,6 @@ def test_conflicting_reservation_is_rejected(setup_service):
         },
     )
 
-
     assert success is False
     assert "Ütközés" in message
 
