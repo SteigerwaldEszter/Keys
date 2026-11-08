@@ -20,6 +20,8 @@ def _loop(app, interval):
             finally:
                 db.session.remove()
 
+    stop.wait(interval)
+
 
 def start_deadline_scheduler(app):
     global _started
