@@ -133,8 +133,8 @@ def test_recurring_reservations_create_audit_entries(setup_service):
     reservation.query.filter.return_value.first.return_value = None
 
     start = (datetime.now() + timedelta(days=2)).replace(
-            hour=10, minute=0, second=0, microsecond=0
-        )
+        hour=10, minute=0, second=0, microsecond=0
+    )
 
     success, result = service.create_reservation(
         {"user_id": 2},
@@ -167,16 +167,17 @@ def test_conflicting_reservation_is_rejected(setup_service):
 
     reservation.query.filter.return_value.first.return_value = object()
 
+    
     start = (datetime.now() + timedelta(days=2)).replace(
-            hour=10, minute=0, second=0, microsecond=0
-        )
+        hour=10, minute=0, second=0, microsecond=0
+    )
     success, message = service.create_reservation(
-            {"user_id": 2},
-            {
-                "room_id": "I1",
-                "start_time": start,
-            },
-        )
+        {"user_id": 2},
+        {
+            "room_id": "I1",
+            "start_time": start,
+        },
+    )
 
 
     assert success is False
