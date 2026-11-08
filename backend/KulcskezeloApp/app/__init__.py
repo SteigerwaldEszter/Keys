@@ -38,4 +38,10 @@ def create_app(config_class=Config):
     app.register_blueprint(bp_users, url_prefix="/api/user")
     app.register_blueprint(bp_reservations, url_prefix="/api/reservation")
 
+    @app.before_request
+    def _start_deadline_sweep():
+        from app.scheduler import start_deadline_scheduler
+
+        start_deadline_scheduler(app)
+
     return app

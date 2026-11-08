@@ -1,5 +1,5 @@
 from apiflask import Schema
-from apiflask.fields import Boolean, Integer, String
+from apiflask.fields import Boolean, DateTime, Integer, String
 
 
 class KeyOutSchema(Schema):
@@ -46,3 +46,14 @@ class TempSignatureOut(Schema):
 
 class MessageOut(Schema):
     message = String(required=True)
+
+
+class OverdueKeyOut(Schema):
+    key_id = Integer()
+    key_name = String()
+    room_id = String()
+    is_master = Boolean()
+    reservation_id = Integer()
+    receiver_id = Integer()
+    due_at = DateTime()
+    minutes_late = Integer()
