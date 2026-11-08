@@ -167,7 +167,6 @@ def test_conflicting_reservation_is_rejected(setup_service):
 
     reservation.query.filter.return_value.first.return_value = object()
 
-    
     start = (datetime.now() + timedelta(days=2)).replace(
         hour=10, minute=0, second=0, microsecond=0
     )
