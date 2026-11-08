@@ -96,7 +96,6 @@ class AuthService:
                 return False, "Ehhez a felhasználóhoz nem tartozik ilyen szerepkör!"
 
             if requested_role is None and len(role_names) > 1:
-                
                 return True, {
                     "role_selection_required": True,
                     "roles": role_names,
