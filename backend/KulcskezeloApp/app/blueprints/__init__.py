@@ -51,9 +51,17 @@ def verify_token(token):
         if user is None or not user.is_active:
             return None
 
+        db_roles = [role.name for role in user.roles]
+        token_roles = data.get("roles")
+
+        if isinstance(token_roles, list):
+            roles = [name for name in db_roles if name in token_roles]
+        else:
+            roles = db_roles
+
         return {
             "user_id": user.id,
-            "roles": [role.name for role in user.roles],
+            "roles": roles,
         }
 
     except Exception:

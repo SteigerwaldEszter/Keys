@@ -68,7 +68,7 @@ def get_me():
     return {
         "id": user.id,
         "name": user.name,
-        "roles": [r.name for r in user.roles],
+        "roles": token_auth.current_user["roles"],
     }
 
 
