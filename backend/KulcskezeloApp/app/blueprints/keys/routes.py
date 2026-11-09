@@ -9,6 +9,7 @@ from .schemas import (
     KeyOutSchema,
     KeyReturnSchema,
     MessageOut,
+    OverdueKeyOut,
     TempSignatureIn,
     TempSignatureOut,
 )
@@ -17,6 +18,7 @@ from .service import (
     create_or_update_key,
     delete_key_action,
     get_all_keys,
+    get_overdue_keys_action,
     handover_key_action,
     return_key_action,
     save_temp_signature_action,
@@ -30,6 +32,17 @@ bp = APIBlueprint("keys", __name__, url_prefix="/api/keys")
 @bp.auth_required(auth)
 def list_keys():
     return get_all_keys()
+
+
+@bp.get("/overdue")
+@bp.output(OverdueKeyOut(many=True))
+@bp.auth_required(auth)
+@role_required(["Receptionist", "Admin"])
+def overdue_keys():
+    succes, res = get_overdue_keys_action()
+    if succes:
+        return res
+    raise HTTPError(400, res)
 
 
 @bp.post("/")

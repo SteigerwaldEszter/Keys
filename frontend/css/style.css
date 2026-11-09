@@ -392,3 +392,8 @@ tr.conflict-row > td {
   align-items: end;
   gap: 10px;
 }
+
+#key-overdue ul {
+  margin: 6px 0 0;
+  padding-left: 18px;
+}

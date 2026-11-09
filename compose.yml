@@ -23,6 +23,7 @@ services:
       - FLASK_APP=run.py
       - FLASK_DEBUG=1
       - DATABASE_URL=mysql+pymysql://user:password@db/kulcskezelo
+      - TZ=Europe/Budapest
     depends_on:
       - db
 

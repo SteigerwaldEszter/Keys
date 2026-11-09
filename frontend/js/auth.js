@@ -1,8 +1,16 @@
-async function login(email, password) {
+async function login(email, password, role = null) {
+  const body = { email, password };
+  if (role) body.role = role;
+
   const data = await api("/api/auth/login", {
     method: "POST",
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify(body),
   });
+
+  
+  if (data && data.role_selection_required) {
+    return data;
+  }
 
   if (!data || !data.token) {
     throw new Error("A bejelentkezés nem adott vissza tokent.");
@@ -20,7 +28,7 @@ async function logout() {
   try {
     await api("/api/auth/logout", { method: "POST" });
   } catch {
-    // The session is cleared locally even if the API call fails.
+    
   }
   clearToken();
   window.location.href = "login.html";

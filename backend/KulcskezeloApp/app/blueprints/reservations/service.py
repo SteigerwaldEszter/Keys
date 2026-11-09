@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from app.blueprints.maintenance.service import (
     BLOCKING_RESERVATION_STATUSES,
@@ -44,6 +44,9 @@ class ReservationService:
             if recurring_weeks < 1 or recurring_weeks > 15:
                 return False, ("Az ismétlődések száma 1 és 15 hét között lehet.")
 
+            if base_start_time < datetime.now():
+                return False, "Nem lehet utólag foglalni"
+
             reservations_to_create = []
 
             for week in range(recurring_weeks):
@@ -85,7 +88,7 @@ class ReservationService:
                     room_id=room_id,
                     start_time=current_start,
                     end_time=current_end,
-                    status="active",
+                    status="pending",
                 )
 
                 reservations_to_create.append(new_reservation)

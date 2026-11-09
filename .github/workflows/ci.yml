@@ -23,9 +23,13 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Ruff és Pytest telepítése
+      - name: Függőségek telepítése
         run: |
+          python -m pip install --upgrade pip
           python -m pip install ruff==0.16.9 pytest==7.4.3
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          if [ -f backend/requirements.txt ]; then pip install -r backend/requirements.txt; fi
+          pip install flask
 
       - name: Ruff ellenőrzés
         run: |
