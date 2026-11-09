@@ -40,14 +40,14 @@ async function api(path, options = {}) {
     try {
       data = JSON.parse(text);
     } catch {
-      data = { message: text };
+      data = response.ok ? { message: text } : null;
     }
   }
 
   if (!response.ok) {
     const message =
       (data && (data.message || data.detail || data.error)) ||
-      `Hiba (${response.status})`;
+      `${response.status >= 500 ? "Szerverhiba" : "Hiba"} (${response.status})`;
     const error = new Error(typeof message === "string" ? message : JSON.stringify(message));
         error.status = response.status;
     error.data = data;
