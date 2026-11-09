@@ -1,4 +1,12 @@
-from apiflask.fields import Boolean, DateTime, Integer, List, Nested, String
+from apiflask.fields import (
+    Boolean,
+    DateTime,
+    Integer,
+    List,
+    Method,
+    Nested,
+    String,
+)
 from marshmallow import Schema
 
 
@@ -14,8 +22,22 @@ class ClassroomSchema(Schema):
     id = String()
     capacity = Integer()
     is_active = Boolean()
-    tools = List(String())
-    room_type = String()
+    room_type = Method("get_room_type_name")
+    room_type_id = Integer(attribute="room_type")
+    tools = Method("get_tool_names")
+
+    def get_room_type_name(self, classroom):
+        if classroom.types is None:
+            return None
+
+        return classroom.types.name
+
+    def get_tool_names(self, classroom):
+        return [
+            room_tool.tools.name
+            for room_tool in classroom.room_tools
+            if room_tool.tools is not None and room_tool.active
+        ]
 
 
 class ClassroomListResponseSchema(Schema):
@@ -23,18 +45,23 @@ class ClassroomListResponseSchema(Schema):
 
 
 class ToolSchema(Schema):
-    id = Integer()
-    name = String()
+    id = Integer(attribute="tool_id")
+    name = Method("get_name")
     quantity = Integer()
     active = Boolean()
 
+    def get_name(self, room_tool):
+        if room_tool.tools is None:
+            return None
 
-class ClassroomDetailResponseSchema(Schema):
-    id = String()
-    capacity = Integer()
-    is_active = Boolean()
-    room_type = String()
-    tools = List(Nested(ToolSchema))
+        return room_tool.tools.name
+
+
+class ClassroomDetailResponseSchema(ClassroomSchema):
+    tools = List(
+        Nested(ToolSchema),
+        attribute="room_tools",
+    )
 
 
 class ClassroomCreateRequestSchema(Schema):
