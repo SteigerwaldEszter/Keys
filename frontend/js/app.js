@@ -9,14 +9,16 @@ document.getElementById("logout-button").addEventListener("click", () => {
   logout();
 });
 
-document.querySelectorAll(".tab").forEach((tab) => {
-  tab.addEventListener("click", () => {
-    const target = tab.dataset.tab;
-    document.querySelectorAll(".tab").forEach((item) => item.classList.toggle("active", item === tab));
-    document.querySelectorAll(".panel").forEach((panel) => {
-      panel.classList.toggle("active", panel.id === `panel-${target}`);
-    });
+function activateTab(tab) {
+  const target = tab?.dataset.tab;
+  document.querySelectorAll(".tab").forEach((item) => item.classList.toggle("active", item === tab));
+  document.querySelectorAll(".panel").forEach((panel) => {
+    panel.classList.toggle("active", panel.id === `panel-${target}`);
   });
+}
+
+document.querySelectorAll(".tab").forEach((tab) => {
+  tab.addEventListener("click", () => activateTab(tab));
 });
 
 getMe()
@@ -27,6 +29,7 @@ getMe()
       const allowed = hasAnyRole(user, tab.dataset.roles.split(","));
       tab.classList.toggle("hidden", !allowed);
     });
+    activateTab(document.querySelector(".tab:not(.hidden)"));
     initClassrooms(user);
     initKeys(user);
     initReservations(user);
