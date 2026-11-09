@@ -76,13 +76,43 @@ class AuthService:
         valid_password = user is not None and user.check_password(data["password"])
 
         if valid_password and user.is_active:
-            token = AuthService.token_generate(user)
+            role_names = sorted(r.name for r in user.roles)
+            requested_role = data.get("role")
+
+            if requested_role is not None and requested_role not in role_names:
+                create_audit_log(
+                    action="LOGIN_FAILED",
+                    entity_name="authentication",
+                    entity_value=user.id,
+                    user_id=None,
+                    new_value={"reason": "invalid_role", "role": requested_role},
+                )
+                try:
+                    db.session.commit()
+                except Exception:
+                    db.session.rollback()
+                    raise
+
+                return False, "Ehhez a felhasználóhoz nem tartozik ilyen szerepkör!"
+
+            if requested_role is None and len(role_names) > 1:
+                return True, {
+                    "role_selection_required": True,
+                    "roles": role_names,
+                    "user_id": user.id,
+                }
+
+            selected_role = requested_role or (role_names[0] if role_names else None)
+            token = AuthService.token_generate(
+                user, [selected_role] if selected_role else []
+            )
 
             create_audit_log(
                 action="LOGIN_SUCCESS",
                 entity_name="authentication",
                 entity_value=user.id,
                 user_id=user.id,
+                new_value={"role": selected_role},
             )
 
             try:
@@ -94,6 +124,9 @@ class AuthService:
             return True, {
                 "token": token,
                 "user_id": user.id,
+                "role": selected_role,
+                "roles": [selected_role] if selected_role else [],
+                "role_selection_required": False,
             }
 
         reason = "invalid_credentials"
@@ -135,12 +168,15 @@ class AuthService:
             raise
 
     @staticmethod
-    def token_generate(user):
+    def token_generate(user, roles=None):
+        if roles is None:
+            roles = [r.name for r in user.roles]
+
         header = {"alg": "RS256"}
 
         payload = {
             "user_id": user.id,
-            "roles": [r.name for r in user.roles],
+            "roles": roles,
             "exp": int((datetime.now() + timedelta(hours=8)).timestamp()),
         }
 

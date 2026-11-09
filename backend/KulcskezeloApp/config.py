@@ -28,3 +28,8 @@ class Config:
     ) or "sqlite:///" + os.path.join(basedir, "app.db")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     PRIVATE_KEY = load_private_key()
+
+    NO_SHOW_GRACE_MINUTES = int(os.environ.get("NO_SHOW_GRACE_MINUTES", 15))
+    LATE_RETURN_GRACE_MINUTES = int(os.environ.get("LATE_RETURN_GRACE_MINUTES", 15))
+    DEADLINE_SWEEP_SECONDS = int(os.environ.get("DEADLINE_SWEEP_SECONDS", 60))
+    DEADLINE_SWEEP_ENABLED = os.environ.get("DEADLINE_SWEEP_ENABLED", "1") != "0"

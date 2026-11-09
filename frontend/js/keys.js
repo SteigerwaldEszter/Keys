@@ -252,20 +252,58 @@ function initKeys(user) {
     }
 
     try {
-      await keysRequest(`/${keyId}/${action}`, {
+      const result = await keysRequest(`/${keyId}/${action}`, {
         method: "POST",
         body: JSON.stringify(payload),
       });
-      showAlert(action === "handover" ? "A kulcs kiadva." : "A kulcs visszavéve.", true);
+      if (action === "handover") {
+        showAlert("A kulcs kiadva.", true);
+      } else if (result && result.late) {
+        showAlert(`${result.message}.`, false);
+      } else {
+        showAlert("A kulcs visszavéve.", true);
+      }
       handoverForm.reset();
       resetSignatureUi();
       await loadKeys();
+      loadOverdue();
     } catch (error) {
       showAlert(error.message);
     } finally {
       document.getElementById("handover-pin").value = "";
     }
   });
+
+  
+  const overdueEl = document.getElementById("key-overdue");
+
+  async function loadOverdue() {
+    if (!isReceptionist && !isAdmin) return;
+    try {
+      const items = (await keysRequest("/overdue")) || [];
+      overdueEl.classList.toggle("visible", items.length > 0);
+      if (!items.length) {
+        overdueEl.textContent = "";
+        return;
+      }
+      overdueEl.innerHTML =
+        `<strong>Késve visszavett kulcsok (${items.length}):</strong><ul>` +
+        items
+          .map(
+            (item) =>
+              `<li>${escapeHtml(item.key_name)} (kulcs #${escapeHtml(item.key_id)}, ` +
+              `terem: ${escapeHtml(item.room_id)}, foglalás #${escapeHtml(item.reservation_id)}) – ` +
+              `${escapeHtml(item.minutes_late)} perce lejárt a foglalás</li>`,
+          )
+          .join("") +
+        "</ul>";
+    } catch {
+      
+    }
+  }
+
+  loadOverdue();
+  setInterval(loadOverdue, 60000);
 
   loadKeys().catch((error) => showAlert(error.message));
 }

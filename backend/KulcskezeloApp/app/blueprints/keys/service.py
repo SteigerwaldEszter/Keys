@@ -1,9 +1,11 @@
 import re
 import time
+from datetime import datetime
 
 from apiflask import abort
 from sqlalchemy.exc import IntegrityError
 
+from app.blueprints.keys.deadlines import get_overdue_keys, late_return_grace
 from app.blueprints.reports.service import create_audit_log
 from app.extensions import db
 from app.models.key import Key
@@ -74,7 +76,7 @@ def create_or_update_key(
             )
 
         db.session.commit()
-        return key
+        return True, key
 
     except Exception:
         db.session.rollback()
@@ -176,7 +178,7 @@ def handover_key_action(
 
         db.session.commit()
 
-        return {
+        return True, {
             "message": "Kulcs sikeresen kiadva",
             "key_id": key.id,
         }
@@ -219,6 +221,16 @@ def return_key_action(
 
         old_status = key.status
 
+        reservation = db.session.get(Reservation, reservation_id)
+        late = False
+        minutes_late = 0
+
+        if reservation is not None:
+            now = datetime.now()
+            if now > reservation.end_time + late_return_grace():
+                late = True
+                minutes_late = int((now - reservation.end_time).total_seconds() // 60)
+
         signature = Signature(
             format=auth_format,
             payload=signature_payload,
@@ -242,6 +254,9 @@ def return_key_action(
         key.status = "available"
 
         audit_action = "MASTER_KEY_RETURN" if key.is_master else "KEY_RETURN"
+        message = "Kulcs sikeresen visszavéve"
+        if late:
+            message += f" (késve, {minutes_late} perccel a foglalás vége után)"
 
         create_audit_log(
             action=audit_action,
@@ -260,14 +275,18 @@ def return_key_action(
                 "key_log_id": key_log.id,
                 "auth_format": auth_format,
                 "is_master": key.is_master,
+                "late": late,
+                "minutes_late": minutes_late,
             },
         )
 
         db.session.commit()
 
-        return {
-            "message": "Kulcs sikeresen visszavéve",
+        return True, {
+            "message": message,
             "key_id": key.id,
+            "late": late,
+            "minutes_late": minutes_late,
         }
 
     except Exception:
@@ -295,7 +314,7 @@ def delete_key_action(
         db.session.delete(key)
         db.session.commit()
 
-        return {
+        return True, {
             "message": "Kulcs sikeresen törölve.",
             "key_id": key_id,
         }
@@ -366,6 +385,8 @@ def save_temp_signature_action(
         "timestamp": now,
     }
 
+    return True, {"message": "Az aláírás elmentve."}
+
 
 def check_temp_signature_action(token):
     _validate_signature_token(token)
@@ -374,10 +395,14 @@ def check_temp_signature_action(token):
     data = temp_signatures_cache.pop(token, None)
 
     if data is None:
-        return {"status": "waiting"}
+        return True, {"status": "waiting"}
 
-    return {
+    return True, {
         "status": "ready",
         "format": data["format"],
         "payload": data["payload"],
     }
+
+
+def get_overdue_keys_action():
+    return True, get_overdue_keys()
