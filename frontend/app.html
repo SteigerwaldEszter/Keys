@@ -199,8 +199,10 @@
             <div id="reservation-form-box" class="box hidden">
               <h3>Új foglalás</h3>
               <form id="reservation-form">
-                <label for="reservation-room-id">Terem azonosító</label>
-                <input id="reservation-room-id" required />
+                <label>Szükséges eszközök</label>
+                <div id="reservation-tool-filter"></div>
+                <label for="reservation-room-id">Terem</label>
+                <select id="reservation-room-id" required></select>
                 <label for="reservation-start">Kezdés</label>
                 <input id="reservation-start" type="datetime-local" required />
                 <label for="reservation-slots">Blokkok száma (1–6)</label>
