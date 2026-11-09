@@ -1,4 +1,3 @@
-
 from apiflask.fields import (
     Boolean,
     DateTime,
@@ -37,8 +36,7 @@ class ClassroomSchema(Schema):
         return [
             room_tool.tools.name
             for room_tool in classroom.room_tools
-            if room_tool.tools is not None
-            and room_tool.active
+            if room_tool.tools is not None and room_tool.active
         ]
 
 
