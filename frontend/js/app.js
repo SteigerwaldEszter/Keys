@@ -21,6 +21,17 @@ document.querySelectorAll(".tab").forEach((tab) => {
   tab.addEventListener("click", () => activateTab(tab));
 });
 
+const TAB_INITS = {
+  classrooms: initClassrooms,
+  keys: initKeys,
+  reservations: initReservations,
+  maintenance: initMaintenance,
+  tools: initTools,
+  issues: initIssues,
+  users: initUsers,
+  reports: initReports,
+};
+
 getMe()
   .then((user) => {
     nameEl.textContent = user.name || `Felhasználó #${user.id}`;
@@ -30,14 +41,7 @@ getMe()
       tab.classList.toggle("hidden", !allowed);
     });
     activateTab(document.querySelector(".tab:not(.hidden)"));
-    initClassrooms(user);
-    initKeys(user);
-    initReservations(user);
-    initMaintenance(user);
-    initTools(user);
-    initIssues(user);
-    initUsers(user);
-    initReports(user);
+    document.querySelectorAll(".tab:not(.hidden)").forEach((tab) => TAB_INITS[tab.dataset.tab](user));
   })
   .catch(() => {
     clearToken();
