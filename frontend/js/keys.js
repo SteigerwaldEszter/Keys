@@ -35,6 +35,126 @@ function initKeys(user) {
     alertEl.classList.toggle("ok", ok);
   }
 
+  const masterBox = document.getElementById("master-box");
+  const masterUserSelect = document.getElementById("master-user-select");
+  const masterRoomSelect = document.getElementById("master-room-select");
+  let masterKeyId = null;
+  let masterUsers = null;
+  let masterRooms = null;
+
+  function fillSelect(select, items, emptyText) {
+    select.innerHTML = "";
+    if (!items.length) {
+      const option = document.createElement("option");
+      option.value = "";
+      option.textContent = emptyText;
+      select.appendChild(option);
+    }
+    items.forEach(([value, text]) => {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = text;
+      select.appendChild(option);
+    });
+    select.nextElementSibling.disabled = !items.length;
+  }
+
+  function fillRows(tbody, items, emptyText, onRemove) {
+    tbody.innerHTML = "";
+    if (!items.length) {
+      tbody.innerHTML = `<tr><td colspan="2">${emptyText}</td></tr>`;
+      return;
+    }
+    items.forEach(([value, text]) => {
+      const tr = document.createElement("tr");
+      const label = document.createElement("td");
+      label.textContent = text;
+      const actions = document.createElement("td");
+      const button = document.createElement("button");
+      button.className = "btn-small btn-danger";
+      button.type = "button";
+      button.textContent = "Eltávolítás";
+      button.addEventListener("click", () => onRemove(value));
+      actions.appendChild(button);
+      tr.append(label, actions);
+      tbody.appendChild(tr);
+    });
+  }
+
+  async function masterRequest(path, options) {
+    try {
+      const result = await keysRequest(`/${masterKeyId}/master-permissions${path}`, options);
+      showAlert(result.message, true);
+      await renderMaster();
+    } catch (error) {
+      showAlert(error.message);
+    }
+  }
+
+  async function renderMaster() {
+    if (!masterUsers) {
+      const [userData, roomData] = await Promise.all([api("/api/user/list"), api("/api/classroom/list")]);
+      masterUsers = userData.users || [];
+      masterRooms = roomData.classrooms || [];
+    }
+    const details = await keysRequest(`/${masterKeyId}/master-permissions`);
+    const userIds = details.users.map((item) => item.id);
+    const roomIds = details.rooms.map((item) => item.id);
+
+    fillRows(
+      document.getElementById("master-user-rows"),
+      details.users.map((item) => [item.id, item.name]),
+      "Még senki nem jogosult.",
+      (userId) => masterRequest(`/users/${userId}`, { method: "DELETE" })
+    );
+    fillRows(
+      document.getElementById("master-room-rows"),
+      details.rooms.map((item) => [item.id, `${item.id} (${item.capacity} fő)`]),
+      "Még nincs hozzárendelt terem.",
+      (roomId) => masterRequest(`/rooms/${encodeURIComponent(roomId)}`, { method: "DELETE" })
+    );
+    fillSelect(
+      masterUserSelect,
+      masterUsers
+        .filter((item) => !userIds.includes(item.id))
+        .map((item) => [item.id, `${item.name} (${(item.roles || []).join(", ")})`]),
+      "Nincs több felhasználó"
+    );
+    fillSelect(
+      masterRoomSelect,
+      masterRooms
+        .filter((room) => !roomIds.includes(room.id))
+        .map((room) => [room.id, `${room.id} (${room.capacity} fő)`]),
+      "Nincs több terem"
+    );
+  }
+
+  async function openMaster(key) {
+    masterKeyId = key.id;
+    document.getElementById("master-key-name").textContent = key.name ?? `#${key.id}`;
+    masterBox.classList.remove("hidden");
+    try {
+      await renderMaster();
+    } catch (error) {
+      showAlert(error.message);
+    }
+  }
+
+  document.getElementById("master-user-form").addEventListener("submit", (event) => {
+    event.preventDefault();
+    masterRequest("/users", { method: "POST", body: JSON.stringify({ user_id: Number(masterUserSelect.value) }) });
+  });
+
+  document.getElementById("master-room-form").addEventListener("submit", (event) => {
+    event.preventDefault();
+    masterRequest("/rooms", { method: "POST", body: JSON.stringify({ room_id: masterRoomSelect.value }) });
+  });
+
+  document.getElementById("master-close").addEventListener("click", () => {
+    masterKeyId = null;
+    masterBox.classList.add("hidden");
+  });
+
   async function loadKeys() {
     const keys = (await keysRequest("")) || [];
     tbody.innerHTML = "";
@@ -79,6 +199,14 @@ function initKeys(user) {
             showAlert(error.message);
           }
         });
+        if (key.is_master) {
+          const masterButton = document.createElement("button");
+          masterButton.className = "btn-small btn-secondary";
+          masterButton.type = "button";
+          masterButton.textContent = "Jogosultságok";
+          masterButton.addEventListener("click", () => openMaster(key));
+          actions.appendChild(masterButton);
+        }
         tr.appendChild(actions);
       } else {
         tr.insertAdjacentHTML("beforeend", "<td></td>");

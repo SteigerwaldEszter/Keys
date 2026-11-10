@@ -115,6 +115,26 @@
                 <button id="key-reset" class="btn-secondary" type="button">Új űrlap</button>
               </form>
             </div>
+            <div id="master-box" class="box hidden" style="margin-top: 16px">
+              <h3>Mesterkulcs-jogosultságok: <span id="master-key-name"></span></h3>
+              <label>Jogosult felhasználók</label>
+              <table class="section">
+                <tbody id="master-user-rows"></tbody>
+              </table>
+              <form id="master-user-form">
+                <select id="master-user-select" aria-label="Felhasználó" required></select>
+                <button type="submit">Jogosultság hozzáadása</button>
+              </form>
+              <label class="section">Nyitható termek</label>
+              <table class="section">
+                <tbody id="master-room-rows"></tbody>
+              </table>
+              <form id="master-room-form">
+                <select id="master-room-select" aria-label="Terem" required></select>
+                <button type="submit">Terem hozzárendelése</button>
+              </form>
+              <button id="master-close" class="btn-secondary" type="button">Bezárás</button>
+            </div>
             <div id="key-handover-box" class="box hidden" style="margin-top: 16px">
               <h3>Kiadás / visszavétel</h3>
               <form id="key-handover-form">
