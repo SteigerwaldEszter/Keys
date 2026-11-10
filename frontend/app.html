@@ -19,17 +19,17 @@
     </header>
     <main class="shell">
       <nav class="tabs">
-        <button class="tab active" type="button" data-tab="classrooms">Teremek</button>
-        <button class="tab" type="button" data-tab="keys">Kulcsok</button>
-        <button class="tab" type="button" data-tab="reservations">Foglalások</button>
+        <button class="tab hidden" type="button" data-tab="classrooms" data-roles="Instructor,Admin">Teremek</button>
+        <button class="tab hidden" type="button" data-tab="keys" data-roles="Receptionist,Admin">Kulcsok</button>
+        <button class="tab hidden" type="button" data-tab="reservations" data-roles="Instructor,Receptionist,Admin">Foglalások</button>
         <button class="tab hidden" type="button" data-tab="maintenance" data-roles="Admin">Karbantartás</button>
-        <button class="tab" type="button" data-tab="tools">Eszközök</button>
-        <button class="tab" type="button" data-tab="issues">Hibajegyek</button>
+        <button class="tab hidden" type="button" data-tab="tools" data-roles="Admin">Eszközök</button>
+        <button class="tab hidden" type="button" data-tab="issues" data-roles="Receptionist,Admin">Hibajegyek</button>
         <button class="tab hidden" type="button" data-tab="users" data-roles="Admin">Felhasználók</button>
         <button class="tab hidden" type="button" data-tab="reports" data-roles="Director">Jelentések</button>
       </nav>
 
-      <section id="panel-classrooms" class="panel active">
+      <section id="panel-classrooms" class="panel">
         <div class="panel-header">
           <h2>Teremek</h2>
         </div>
@@ -115,6 +115,26 @@
                 <button id="key-reset" class="btn-secondary" type="button">Új űrlap</button>
               </form>
             </div>
+            <div id="master-box" class="box hidden" style="margin-top: 16px">
+              <h3>Mesterkulcs-jogosultságok: <span id="master-key-name"></span></h3>
+              <label>Jogosult felhasználók</label>
+              <table class="section">
+                <tbody id="master-user-rows"></tbody>
+              </table>
+              <form id="master-user-form">
+                <select id="master-user-select" aria-label="Felhasználó" required></select>
+                <button type="submit">Jogosultság hozzáadása</button>
+              </form>
+              <label class="section">Nyitható termek</label>
+              <table class="section">
+                <tbody id="master-room-rows"></tbody>
+              </table>
+              <form id="master-room-form">
+                <select id="master-room-select" aria-label="Terem" required></select>
+                <button type="submit">Terem hozzárendelése</button>
+              </form>
+              <button id="master-close" class="btn-secondary" type="button">Bezárás</button>
+            </div>
             <div id="key-handover-box" class="box hidden" style="margin-top: 16px">
               <h3>Kiadás / visszavétel</h3>
               <form id="key-handover-form">
@@ -199,8 +219,10 @@
             <div id="reservation-form-box" class="box hidden">
               <h3>Új foglalás</h3>
               <form id="reservation-form">
-                <label for="reservation-room-id">Terem azonosító</label>
-                <input id="reservation-room-id" required />
+                <label>Szükséges eszközök</label>
+                <div id="reservation-tool-filter"></div>
+                <label for="reservation-room-id">Terem</label>
+                <select id="reservation-room-id" required></select>
                 <label for="reservation-start">Kezdés</label>
                 <input id="reservation-start" type="datetime-local" required />
                 <label for="reservation-slots">Blokkok száma (1–6)</label>
@@ -343,7 +365,7 @@
               <tbody id="issue-rows"></tbody>
             </table>
           </div>
-          <div class="box">
+          <div id="issue-form-box" class="box hidden">
             <h3>Hiba bejelentése</h3>
             <form id="issue-form">
               <label for="issue-room-id">Terem</label>
@@ -432,6 +454,30 @@
             <div class="stat-label">Elérhető</div>
             <div id="stat-available" class="stat-value">–</div>
           </div>
+        </div>
+        <div class="box table-wrap section">
+          <h3>Teremkihasználtság</h3>
+          <div class="date-range">
+            <div>
+              <label for="utilization-from">Kezdete</label>
+              <input id="utilization-from" type="date" />
+            </div>
+            <div>
+              <label for="utilization-to">Vége</label>
+              <input id="utilization-to" type="date" />
+            </div>
+          </div>
+          <p class="muted">A lemondott és meg nem jelent foglalások nem számítanak bele.</p>
+          <table>
+            <thead>
+              <tr>
+                <th>Terem</th>
+                <th>Foglalások</th>
+                <th>Foglalt óra</th>
+              </tr>
+            </thead>
+            <tbody id="utilization-rows"></tbody>
+          </table>
         </div>
         <div class="box table-wrap section">
           <h3>Vissza nem hozott kulcsok</h3>

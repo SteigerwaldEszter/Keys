@@ -10,6 +10,14 @@ function initIssues(user) {
   const tbody = document.getElementById("issue-rows");
   const form = document.getElementById("issue-form");
   const roomSelect = document.getElementById("issue-room-id");
+  const formBox = document.getElementById("issue-form-box");
+  const canCreate = hasRole(user, "Receptionist");
+
+  if (canCreate) {
+    formBox.classList.remove("hidden");
+  } else {
+    formBox.parentElement.classList.remove("grid-2");
+  }
 
   function showAlert(message, ok = false) {
     alertEl.textContent = message;
@@ -111,6 +119,8 @@ function initIssues(user) {
     }
   });
 
-  loadRooms().catch((error) => showAlert(error.message));
+  if (canCreate) {
+    loadRooms().catch((error) => showAlert(error.message));
+  }
   loadIssues().catch((error) => showAlert(error.message));
 }

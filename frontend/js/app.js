@@ -9,15 +9,28 @@ document.getElementById("logout-button").addEventListener("click", () => {
   logout();
 });
 
-document.querySelectorAll(".tab").forEach((tab) => {
-  tab.addEventListener("click", () => {
-    const target = tab.dataset.tab;
-    document.querySelectorAll(".tab").forEach((item) => item.classList.toggle("active", item === tab));
-    document.querySelectorAll(".panel").forEach((panel) => {
-      panel.classList.toggle("active", panel.id === `panel-${target}`);
-    });
+function activateTab(tab) {
+  const target = tab?.dataset.tab;
+  document.querySelectorAll(".tab").forEach((item) => item.classList.toggle("active", item === tab));
+  document.querySelectorAll(".panel").forEach((panel) => {
+    panel.classList.toggle("active", panel.id === `panel-${target}`);
   });
+}
+
+document.querySelectorAll(".tab").forEach((tab) => {
+  tab.addEventListener("click", () => activateTab(tab));
 });
+
+const TAB_INITS = {
+  classrooms: initClassrooms,
+  keys: initKeys,
+  reservations: initReservations,
+  maintenance: initMaintenance,
+  tools: initTools,
+  issues: initIssues,
+  users: initUsers,
+  reports: initReports,
+};
 
 getMe()
   .then((user) => {
@@ -27,14 +40,8 @@ getMe()
       const allowed = hasAnyRole(user, tab.dataset.roles.split(","));
       tab.classList.toggle("hidden", !allowed);
     });
-    initClassrooms(user);
-    initKeys(user);
-    initReservations(user);
-    initMaintenance(user);
-    initTools(user);
-    initIssues(user);
-    initUsers(user);
-    initReports(user);
+    activateTab(document.querySelector(".tab:not(.hidden)"));
+    document.querySelectorAll(".tab:not(.hidden)").forEach((tab) => TAB_INITS[tab.dataset.tab](user));
   })
   .catch(() => {
     clearToken();

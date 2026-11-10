@@ -11,7 +11,7 @@ function toApiDateTime(value) {
 }
 
 function initReservations(user) {
-  const canCreate = hasAnyRole(user, ["Instructor", "Admin"]);
+  const canCreate = hasRole(user, "Instructor");
   const canStatus = hasAnyRole(user, ["Receptionist", "Admin"]);
   const canDelete = hasAnyRole(user, ["Instructor", "Admin"]);
   const alertEl = document.getElementById("reservation-alert");
@@ -33,6 +33,59 @@ function initReservations(user) {
     alertEl.classList.add("visible");
     alertEl.classList.toggle("ok", ok);
   }
+
+  const roomSelect = document.getElementById("reservation-room-id");
+  const toolFilter = document.getElementById("reservation-tool-filter");
+  let rooms = [];
+
+  function renderRoomOptions() {
+    const required = [...toolFilter.querySelectorAll("input:checked")].map((input) => input.value);
+    const matching = rooms.filter((room) => required.every((tool) => (room.tools || []).includes(tool)));
+    const previous = roomSelect.value;
+    roomSelect.innerHTML = "";
+
+    if (!matching.length) {
+      const option = document.createElement("option");
+      option.value = "";
+      option.textContent = "Nincs megfelelő terem";
+      roomSelect.appendChild(option);
+      return;
+    }
+
+    matching.forEach((room) => {
+      const option = document.createElement("option");
+      option.value = room.id;
+      option.textContent = `${room.id} (${room.capacity} fő)`;
+      roomSelect.appendChild(option);
+    });
+    if (matching.some((room) => room.id === previous)) {
+      roomSelect.value = previous;
+    }
+  }
+
+  async function loadRooms() {
+    const data = await api("/api/classroom/list");
+    rooms = data.classrooms || [];
+    const tools = [...new Set(rooms.flatMap((room) => room.tools || []))].sort();
+    toolFilter.innerHTML = "";
+
+    tools.forEach((tool, index) => {
+      const row = document.createElement("div");
+      row.className = "checkbox-row";
+      const input = document.createElement("input");
+      input.id = `reservation-tool-${index}`;
+      input.type = "checkbox";
+      input.value = tool;
+      const label = document.createElement("label");
+      label.htmlFor = input.id;
+      label.textContent = tool;
+      row.append(input, label);
+      toolFilter.appendChild(row);
+    });
+    renderRoomOptions();
+  }
+
+  toolFilter.addEventListener("change", renderRoomOptions);
 
   async function loadReservations() {
     const data = await api("/api/reservation/list");
@@ -98,6 +151,7 @@ function initReservations(user) {
       });
       showAlert("A foglalás létrejött.", true);
       form.reset();
+      renderRoomOptions();
       document.getElementById("reservation-slots").value = 1;
       document.getElementById("reservation-weeks").value = 1;
       await loadReservations();
@@ -131,4 +185,7 @@ function initReservations(user) {
   });
 
   loadReservations().catch((error) => showAlert(error.message));
+  if (canCreate) {
+    loadRooms().catch((error) => showAlert(error.message));
+  }
 }

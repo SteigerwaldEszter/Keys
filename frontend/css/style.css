@@ -338,6 +338,16 @@ select.inline-select {
   word-break: break-word;
 }
 
+.date-range {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.date-range input {
+  margin-bottom: 8px;
+}
+
 .alert.ok {
   background: #e8efe8;
   color: var(--ok);
