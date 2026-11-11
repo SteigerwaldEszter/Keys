@@ -339,3 +339,50 @@ def test_admin_deletion_is_audited(setup_service):
 
     session.delete.assert_called_once()
     session.commit.assert_called_once()
+
+
+def _reservation(status, *actions):
+    return SimpleNamespace(
+        status=status,
+        key_logs=[SimpleNamespace(action=action) for action in actions],
+    )
+
+
+def test_receptionist_sees_completed_only_until_key_is_returned(setup_service):
+    service, reservation, _, _ = setup_service
+
+    waiting = _reservation("completed", "ISSUE")
+    returned = _reservation("completed", "ISSUE", "RETURN")
+    open_one = _reservation("pending")
+    reservation.query.all.return_value = [waiting, returned, open_one]
+
+    success, result = service.get_reservations(
+        {"user_id": 5, "roles": ["Receptionist"]}
+    )
+
+    assert success is True
+    assert result["reservations"] == [waiting, open_one]
+
+
+def test_admin_sees_every_completed_reservation(setup_service):
+    service, reservation, _, _ = setup_service
+
+    returned = _reservation("completed", "ISSUE", "RETURN")
+    reservation.query.all.return_value = [returned]
+
+    success, result = service.get_reservations({"user_id": 1, "roles": ["Admin"]})
+
+    assert success is True
+    assert result["reservations"] == [returned]
+
+
+def test_manual_completion_is_audited_as_completed(setup_service):
+    service, reservation, _, audit = setup_service
+
+    reservation.query.get.return_value = SimpleNamespace(id=1, status="active")
+
+    success, updated = service.update_status(1, "completed", {"user_id": 4})
+
+    assert success is True
+    assert updated.status == "completed"
+    assert audit.call_args.kwargs["action"] == "BOOKING_COMPLETED"

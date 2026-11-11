@@ -9,6 +9,15 @@ from app.extensions import db
 from app.models.reservation import Reservation
 
 
+def has_outstanding_key(reservation):
+
+    logs = reservation.key_logs or []
+    issued = sum(1 for log in logs if log.action == "ISSUE")
+    returned = sum(1 for log in logs if log.action == "RETURN")
+
+    return issued > returned
+
+
 class ReservationService:
     @staticmethod
     def get_reservations(current_user):
@@ -17,8 +26,17 @@ class ReservationService:
                 current_user.get("roles", []) if isinstance(current_user, dict) else []
             )
 
-            if any(role in roles for role in ["Admin", "Director", "Receptionist"]):
+            if any(role in roles for role in ["Admin", "Director"]):
                 reservations = Reservation.query.all()
+            elif "Receptionist" in roles:
+                # A befejezett foglalást a portás csak addig látja, amíg a
+                # hozzá kiadott kulcsot vissza nem hozták.
+                reservations = [
+                    reservation
+                    for reservation in Reservation.query.all()
+                    if reservation.status != "completed"
+                    or has_outstanding_key(reservation)
+                ]
             else:
                 user_id = current_user.get("user_id")
 
@@ -177,6 +195,9 @@ class ReservationService:
 
             elif new_status == "no-show":
                 action = "BOOKING_NO_SHOW"
+
+            elif new_status == "completed":
+                action = "BOOKING_COMPLETED"
 
             else:
                 action = "BOOKING_UPDATED"

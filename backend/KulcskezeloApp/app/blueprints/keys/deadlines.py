@@ -71,6 +71,49 @@ def mark_no_shows(now=None):
     return changed
 
 
+def mark_completed(now=None):
+
+    now = now or datetime.now()
+
+    candidates = (
+        Reservation.query.filter(
+            Reservation.status.in_(OPEN_RESERVATION_STATUSES),
+            Reservation.end_time < now,
+            Reservation.key_logs.any(KeyLog.action == "ISSUE"),
+        )
+        .with_for_update()
+        .all()
+    )
+
+    changed = []
+
+    try:
+        for reservation in candidates:
+            old_status = reservation.status
+            reservation.status = "completed"
+
+            create_audit_log(
+                action="BOOKING_COMPLETED",
+                entity_name="reservations",
+                entity_value=reservation.id,
+                user_id=None,
+                old_value={"status": old_status},
+                new_value={
+                    "status": "completed",
+                    "reason": "ended_after_key_issue",
+                    "automatic": True,
+                },
+            )
+            changed.append(reservation.id)
+
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        raise
+
+    return changed
+
+
 def get_overdue_keys(now=None):
     now = now or datetime.now()
     grace = late_return_grace()
@@ -158,5 +201,6 @@ def run_sweep(now=None):
     now = now or datetime.now()
     return {
         "no_show": mark_no_shows(now),
+        "completed": mark_completed(now),
         "overdue": flag_overdue_keys(now),
     }
