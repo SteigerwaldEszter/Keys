@@ -17,9 +17,33 @@ function initClassrooms(user) {
     alertEl.classList.toggle("ok", ok);
   }
 
+  function fillTypeOptions(classrooms) {
+    const select = document.getElementById("classroom-type-id");
+    const previous = select.value;
+    const types = new Map();
+    classrooms.forEach((room) => {
+      if (room.room_type_id != null) {
+        types.set(String(room.room_type_id), room.room_type || `#${room.room_type_id}`);
+      }
+    });
+    select.innerHTML = "";
+    [...types.entries()]
+      .sort((a, b) => a[1].localeCompare(b[1], "hu"))
+      .forEach(([id, name]) => {
+        const option = document.createElement("option");
+        option.value = id;
+        option.textContent = name;
+        select.appendChild(option);
+      });
+    if (types.has(previous)) {
+      select.value = previous;
+    }
+  }
+
   async function loadClassrooms() {
     const data = await api("/api/classroom/list");
     const classrooms = data.classrooms || [];
+    fillTypeOptions(classrooms);
     tbody.innerHTML = "";
 
     if (!classrooms.length) {
@@ -50,8 +74,7 @@ function initClassrooms(user) {
           idInput.value = room.id;
           idInput.readOnly = true;
           document.getElementById("classroom-capacity").value = room.capacity ?? "";
-          document.getElementById("classroom-type-id").value = "";
-          document.getElementById("classroom-type-id").required = false;
+          document.getElementById("classroom-type-id").value = room.room_type_id ?? "";
           document.getElementById("classroom-active").checked = Boolean(room.is_active);
           document.getElementById("classroom-submit").textContent = "Terem mentése";
         });
