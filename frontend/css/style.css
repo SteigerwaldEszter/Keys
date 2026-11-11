@@ -249,6 +249,15 @@ th {
   gap: 6px;
 }
 
+td.actions {
+  display: table-cell;
+  white-space: nowrap;
+}
+
+td.actions > * + * {
+  margin-left: 6px;
+}
+
 .btn-danger {
   background: var(--danger);
 }
