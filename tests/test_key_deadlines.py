@@ -46,6 +46,7 @@ def setup_deadlines():
     class Reservation:
         status = Column()
         start_time = Column()
+        end_time = Column()
         key_logs = Column()
         query = MagicMock()
 
@@ -208,3 +209,42 @@ def test_key_without_issue_log_is_ignored(setup_deadlines):
     )
 
     assert env.module.get_overdue_keys(NOW) == []
+
+
+def test_ended_reservation_with_issued_key_becomes_completed(setup_deadlines):
+    env = setup_deadlines
+    reservation = SimpleNamespace(id=8, status="pending")
+    query = env.Reservation.query.filter.return_value
+    query.with_for_update.return_value.all.return_value = [reservation]
+
+    assert env.module.mark_completed(NOW) == [8]
+    assert reservation.status == "completed"
+
+    kwargs = env.audit.call_args.kwargs
+    assert kwargs["action"] == "BOOKING_COMPLETED"
+    assert kwargs["user_id"] is None
+    assert kwargs["old_value"] == {"status": "pending"}
+    assert kwargs["new_value"]["automatic"] is True
+    env.session.commit.assert_called_once()
+
+
+def test_completed_marking_does_nothing_without_candidates(setup_deadlines):
+    env = setup_deadlines
+    query = env.Reservation.query.filter.return_value
+    query.with_for_update.return_value.all.return_value = []
+
+    assert env.module.mark_completed(NOW) == []
+    env.audit.assert_not_called()
+
+
+def test_sweep_runs_no_show_completed_and_overdue(setup_deadlines):
+    env = setup_deadlines
+    query = env.Reservation.query.filter.return_value
+    query.with_for_update.return_value.all.return_value = []
+    env.Key.query.filter_by.return_value.all.return_value = []
+
+    assert env.module.run_sweep(NOW) == {
+        "no_show": [],
+        "completed": [],
+        "overdue": [],
+    }
