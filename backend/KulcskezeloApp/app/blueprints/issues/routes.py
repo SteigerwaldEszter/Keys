@@ -9,6 +9,7 @@ from .schemas import (
     IssueUpdateSchema,
 )
 from .service import (
+    ALLOWED_ISSUE_STATUSES,
     create_issue,
     get_all_issues,
     update_issue_status,
@@ -30,13 +31,16 @@ def list_issues():
 @bp.auth_required(auth)
 @role_required(["Receptionist", "Admin"])
 def add_issue(json_data):
-    succes, res = create_issue(
+    if not json_data["title"].strip():
+        raise HTTPError(
+            400,
+            message="A hibajegy címe nem lehet üres.",
+        )
+
+    return create_issue(
         issue_data=json_data,
         user_id=auth.current_user["user_id"],
     )
-    if succes:
-        return res
-    raise HTTPError(400, res)
 
 
 @bp.put("/<int:issue_id>")
@@ -45,11 +49,16 @@ def add_issue(json_data):
 @bp.auth_required(auth)
 @role_required(["Receptionist", "Admin"])
 def update_issue(issue_id, json_data):
-    succes, res = update_issue_status(
+    new_status = json_data["status"]
+
+    if new_status not in ALLOWED_ISSUE_STATUSES:
+        raise HTTPError(
+            400,
+            message="Érvénytelen hibajegystátusz.",
+        )
+
+    return update_issue_status(
         issue_id=issue_id,
-        new_status=json_data["status"],
+        new_status=new_status,
         user_id=auth.current_user["user_id"],
     )
-    if succes:
-        return res
-    raise HTTPError(400, res)
